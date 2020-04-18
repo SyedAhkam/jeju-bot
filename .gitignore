@@ -1,0 +1,7 @@
+*.log
+.env
+jeju-env/
+test.py
+mongo.py
+.vscode
+cogs/__pycache__/

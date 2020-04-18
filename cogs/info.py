@@ -39,7 +39,7 @@ class Info(commands.Cog):
                 name='UserName:', value=user_name, inline=True)
             embed_author.add_field(name='UserID:', value=user_id, inline=True)
             embed_author.add_field(
-                name='UserTag:', value=user_name + user_discriminator, inline=True)
+                name='UserTag:', value=user_name + '#' + user_discriminator, inline=True)
 
             if not user_name == display_name:
                 embed_author.add_field(
@@ -83,7 +83,7 @@ class Info(commands.Cog):
         embed_user.add_field(name='UserName:', value=user_name, inline=True)
         embed_user.add_field(name='UserID:', value=user_id, inline=True)
         embed_user.add_field(
-            name='UserTag:', value=user_name + user_discriminator, inline=True)
+            name='UserTag:', value=user_name + '#' + user_discriminator, inline=True)
 
         if not user_name == display_name:
             embed_user.add_field(

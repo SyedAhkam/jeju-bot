@@ -1,4 +1,7 @@
+import discord
 from discord.ext import commands
+
+import datetime
 
 
 class Info(commands.Cog):
@@ -22,21 +25,45 @@ class Info(commands.Cog):
             display_name = ctx.author.display_name
             joined_at = ctx.author.joined_at
             status = ctx.author.status
+            avatar_url = ctx.author.avatar_url
+
+            embed_author = discord.Embed(title='Your info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow(
+            ), footer=f'Requested by {ctx.author.name}')
+
+            embed_author.set_author(
+                name=user_name, url=discord.Embed.Empty, icon_url=avatar_url)
+
+            embed_author.set_thumbnail(url=avatar_url)
+
+            embed_author.add_field(
+                name='UserName:', value=user_name, inline=True)
+            embed_author.add_field(name='UserID:', value=user_id, inline=True)
+            embed_author.add_field(
+                name='UserTag:', value=user_name + user_discriminator, inline=True)
+
+            if not user_name == display_name:
+                embed_author.add_field(
+                    name='Nickname:', value=display_name, inline=True)
+            else:
+                embed_author.add_field(
+                    name='Nickname:', value='None', inline=True)
+
+            embed_author.add_field(
+                name='CreatedAt:', value=created_at, inline=True)
+            embed_author.add_field(
+                name='JoinedAt:', value=joined_at, inline=True)
+            embed_author.add_field(name='Status:', value=status, inline=True)
 
             print(ctx.author.activity)
 
             activities = ctx.author.activities
             print(activities)
-            if "CustomActivity" in activities:
-                print('yes', activities(0))
 
-            if "Game" in activities:
-                print('yes', activities(0))
+            await ctx.send(embed=embed_author)
+            return
 
-            if not user_name == display_name:
-                await ctx.send(f'They have a nickname in this server: {display_name}')
-
-            await ctx.send(f'UserName: {user_name}\nUserID: {user_id}\nUserDiscriminator: {user_discriminator}\nCreatedAt: {created_at}\nJoinedAt: {joined_at}\nStatus: {status}')
+        embed_user = discord.Embed(title=f'{user.name}\'s info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow(
+        ), footer=f'Requested by {ctx.author.name}')
 
         user_name = user.name
         user_id = user.id
@@ -46,25 +73,38 @@ class Info(commands.Cog):
         display_name = user.display_name
         joined_at = user.joined_at
         status = user.status
+        avatar_url = user.avatar_url
+
+        embed_user.set_author(
+            name=user_name, url=discord.Embed.Empty, icon_url=avatar_url)
+
+        embed_user.set_thumbnail(url=avatar_url)
+
+        embed_user.add_field(name='UserName:', value=user_name, inline=True)
+        embed_user.add_field(name='UserID:', value=user_id, inline=True)
+        embed_user.add_field(
+            name='UserTag:', value=user_name + user_discriminator, inline=True)
+
+        if not user_name == display_name:
+            embed_user.add_field(
+                name='Nickname:', value=display_name, inline=True)
+        else:
+            embed_user.add_field(name='Nickname:', value='None', inline=True)
+
+        embed_user.add_field(name='Bot:', value=is_bot, inline=True)
+
+        embed_user.add_field(
+            name='CreatedAt:', value=created_at, inline=True)
+        embed_user.add_field(
+            name='JoinedAt:', value=joined_at, inline=True)
+        embed_user.add_field(name='Status:', value=status, inline=True)
 
         print(user.activity)
 
         activities = ctx.author.activities
         print(activities)
-        if "CustomActivity" in activities:
-            print('yes', activities(0))
 
-        if "Game" in activities:
-            print('yes', activities(0))
-
-        if not user_name == display_name:
-                await ctx.send(f'They have a nickname in this server: {display_name}')
-
-        if is_bot:
-            await ctx.send(f'UserName: {user_name}\nUserID: {user_id}\nUserDiscriminator: {user_discriminator}\nIt\'s a bot.\nCreatedAt: {created_at}\nJoinedAt: {joined_at}\nStatus: {status}')
-            return
-
-        await ctx.send(f'UserName: {user_name}\nUserID: {user_id}\nUserDiscriminator: {user_discriminator}\nCreatedAt: {created_at}\nJoinedAt: {joined_at}\nStatus: {status}')
+        await ctx.send(embed=embed_user)
 
 
 def setup(bot):

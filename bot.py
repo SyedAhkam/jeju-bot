@@ -14,8 +14,9 @@ bot = commands.Bot(command_prefix=PREFIX)
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to discord!')
-    game = discord.Game(name="+help | In Development")
-    await bot.change_presence(status=discord.Status.online, activity=game)
+    #game = discord.Game(name="+help | In Development")
+    activity = discord.Activity(type=discord.ActivityType.watching, name="+help | In Development")
+    await bot.change_presence(status=discord.Status.online, activity=activity)
     print('Status changed')
 
 @bot.event

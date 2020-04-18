@@ -21,11 +21,22 @@ class Info(commands.Cog):
             created_at = ctx.author.created_at
             display_name = ctx.author.display_name
             joined_at = ctx.author.joined_at
+            status = ctx.author.status
+
+            print(ctx.author.activity)
+
+            activities = ctx.author.activities
+            print(activities)
+            if "CustomActivity" in activities:
+                print('yes', activities(0))
+
+            if "Game" in activities:
+                print('yes', activities(0))
 
             if not user_name == display_name:
                 await ctx.send(f'They have a nickname in this server: {display_name}')
 
-            await ctx.send(f'UserName: {user_name}\nUserID: {user_id}\nUserDiscriminator: {user_discriminator}\nCreatedAt: {created_at}\nJoinedAt: {joined_at}')
+            await ctx.send(f'UserName: {user_name}\nUserID: {user_id}\nUserDiscriminator: {user_discriminator}\nCreatedAt: {created_at}\nJoinedAt: {joined_at}\nStatus: {status}')
 
         user_name = user.name
         user_id = user.id
@@ -34,15 +45,26 @@ class Info(commands.Cog):
         created_at = user.created_at
         display_name = user.display_name
         joined_at = user.joined_at
+        status = user.status
+
+        print(user.activity)
+
+        activities = ctx.author.activities
+        print(activities)
+        if "CustomActivity" in activities:
+            print('yes', activities(0))
+
+        if "Game" in activities:
+            print('yes', activities(0))
 
         if not user_name == display_name:
                 await ctx.send(f'They have a nickname in this server: {display_name}')
 
         if is_bot:
-            await ctx.send(f'UserName: {user_name}\nUserID: {user_id}\nUserDiscriminator: {user_discriminator}\nIt\'s a bot.\nCreatedAt: {created_at}\nJoinedAt: {joined_at}')
+            await ctx.send(f'UserName: {user_name}\nUserID: {user_id}\nUserDiscriminator: {user_discriminator}\nIt\'s a bot.\nCreatedAt: {created_at}\nJoinedAt: {joined_at}\nStatus: {status}')
             return
 
-        await ctx.send(f'UserName: {user_name}\nUserID: {user_id}\nUserDiscriminator: {user_discriminator}\nCreatedAt: {created_at}\nJoinedAt: {joined_at}')
+        await ctx.send(f'UserName: {user_name}\nUserID: {user_id}\nUserDiscriminator: {user_discriminator}\nCreatedAt: {created_at}\nJoinedAt: {joined_at}\nStatus: {status}')
 
 
 def setup(bot):

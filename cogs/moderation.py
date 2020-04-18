@@ -30,7 +30,7 @@ class Moderation(commands.Cog):
 
 
         kick_embed = discord.Embed(title='Kicked', description='A user have been kicked.',
-                                   color=0xFFFFFF, timestamp=datetime.datetime.now())
+                                   color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
 
         kick_embed.set_author(
             name=user.name, url=discord.Embed.Empty, icon_url=user.avatar_url)
@@ -64,7 +64,7 @@ class Moderation(commands.Cog):
         user = ctx.bot.get_user(id)
 
         ban_embed = discord.Embed(title='Banned', description='A user have been Banned.',
-                                  color=0xFFFFFF, timestamp=datetime.datetime.now(), footer=user.id)
+                                  color=0xFFFFFF, timestamp=datetime.datetime.utcnow(), footer=user.id)
 
         ban_embed.set_author(
             name=user.name, url=discord.Embed.Empty, icon_url=user.avatar_url)
@@ -94,7 +94,7 @@ class Moderation(commands.Cog):
         user = ctx.bot.get_user(id)
 
         unban_embed = discord.Embed(title='Unbanned', description='A user have been Unbanned.',
-                                    color=0xFFFFFF, timestamp=datetime.datetime.now(), footer=user.id)
+                                    color=0xFFFFFF, timestamp=datetime.datetime.utcnow(), footer=user.id)
 
         unban_embed.set_author(
             name=user.name, url=discord.Embed.Empty, icon_url=user.avatar_url)

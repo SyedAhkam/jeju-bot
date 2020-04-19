@@ -26,6 +26,13 @@ class Info(commands.Cog):
             joined_at = ctx.author.joined_at
             status = ctx.author.status
             avatar_url = ctx.author.avatar_url
+            roles = ctx.author.roles
+            activity = ctx.author.activity
+
+            roles_string = ''
+
+            for role in roles:
+                roles_string += role.name + ', '
 
             embed_author = discord.Embed(title='Your info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow(
             ), footer=f'Requested by {ctx.author.name}')
@@ -42,22 +49,20 @@ class Info(commands.Cog):
                 name='UserTag:', value=user_name + '#' + user_discriminator, inline=True)
 
             if not user_name == display_name:
-                embed_author.add_field(
-                    name='Nickname:', value=display_name, inline=True)
+                embed_author.add_field(name='Nickname:', value=display_name, inline=True)
             else:
-                embed_author.add_field(
-                    name='Nickname:', value='None', inline=True)
+                embed_author.add_field(name='Nickname:', value='None', inline=True)
 
-            embed_author.add_field(
-                name='CreatedAt:', value=created_at, inline=True)
-            embed_author.add_field(
-                name='JoinedAt:', value=joined_at, inline=True)
+            embed_author.add_field(name='CreatedAt:', value=created_at, inline=True)
+            embed_author.add_field(name='JoinedAt:', value=joined_at, inline=True)
             embed_author.add_field(name='Status:', value=status, inline=True)
 
-            print(ctx.author.activity)
+            if not activity:
+                embed_author.add_field(name='Activity:', value='No activity', inline=True)
+            else:
+                embed_author.add_field(name='Activity:', value=activity.name, inline=True)
 
-            activities = ctx.author.activities
-            print(activities)
+            embed_author.add_field(name='Roles:', value=f'```{roles_string}```', inline=False)
 
             await ctx.send(embed=embed_author)
             return
@@ -74,6 +79,13 @@ class Info(commands.Cog):
         joined_at = user.joined_at
         status = user.status
         avatar_url = user.avatar_url
+        roles = user.roles
+        activity = user.activity
+
+        roles_string = ''
+
+        for role in roles:
+            roles_string += role.name + ', '
 
         embed_user.set_author(
             name=user_name, url=discord.Embed.Empty, icon_url=avatar_url)
@@ -99,10 +111,12 @@ class Info(commands.Cog):
             name='JoinedAt:', value=joined_at, inline=True)
         embed_user.add_field(name='Status:', value=status, inline=True)
 
-        print(user.activity)
+        if not activity:
+            embed_user.add_field(name='Activity:', value='No activity', inline=True)
+        else:
+            embed_user.add_field(name='Activity:', value=activity.name, inline=True)
 
-        activities = ctx.author.activities
-        print(activities)
+        embed_user.add_field(name='Roles:', value=f'```{roles_string}```', inline=False)
 
         await ctx.send(embed=embed_user)
 

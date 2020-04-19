@@ -20,13 +20,14 @@ async def on_ready():
     print('Status changed')
 
 @bot.event
-async def on_error(event, *args, **kwargs):
+async def on_error(event, error, *args, **kwargs):
     with open('err.log', 'a') as f:
         if event == 'on_message':
             f.write(f'Unhandled message: {args[0]}\n')
         else:
             raise
     print('An error occured')
+    print(error)
 
 @bot.event
 async def on_command_error(ctx, error):

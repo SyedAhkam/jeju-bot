@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-import datetime
+import datetime, ago
 
 
 class Info(commands.Cog):
@@ -21,9 +21,9 @@ class Info(commands.Cog):
             user_name = ctx.author.name
             user_id = ctx.author.id
             user_discriminator = ctx.author.discriminator
-            created_at = ctx.author.created_at
+            created_at = ago.human(ctx.author.created_at, 4)
             display_name = ctx.author.display_name
-            joined_at = ctx.author.joined_at
+            joined_at = ago.human(ctx.author.joined_at, 4)
             status = ctx.author.status
             avatar_url = ctx.author.avatar_url
             roles = ctx.author.roles
@@ -53,8 +53,8 @@ class Info(commands.Cog):
             else:
                 embed_author.add_field(name='Nickname:', value='None', inline=True)
 
-            embed_author.add_field(name='CreatedAt:', value=created_at, inline=True)
-            embed_author.add_field(name='JoinedAt:', value=joined_at, inline=True)
+            embed_author.add_field(name='Created:', value=created_at, inline=True)
+            embed_author.add_field(name='Joined:', value=joined_at, inline=True)
             embed_author.add_field(name='Status:', value=status, inline=True)
 
             if not activity:
@@ -74,9 +74,9 @@ class Info(commands.Cog):
         user_id = user.id
         user_discriminator = user.discriminator
         is_bot = user.bot
-        created_at = user.created_at
+        created_at = ago.human(user.created_at, 4)
         display_name = user.display_name
-        joined_at = user.joined_at
+        joined_at = ago.human(user.joined_at, 4)
         status = user.status
         avatar_url = user.avatar_url
         roles = user.roles
@@ -106,9 +106,9 @@ class Info(commands.Cog):
         embed_user.add_field(name='Bot:', value=is_bot, inline=True)
 
         embed_user.add_field(
-            name='CreatedAt:', value=created_at, inline=True)
+            name='Created:', value=created_at, inline=True)
         embed_user.add_field(
-            name='JoinedAt:', value=joined_at, inline=True)
+            name='Joined:', value=joined_at, inline=True)
         embed_user.add_field(name='Status:', value=status, inline=True)
 
         if not activity:

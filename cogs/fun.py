@@ -3,10 +3,14 @@ from discord.ext import commands
 
 import random
 import datetime
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+MONGO_URI = os.getenv('MONGODB_URI')
 
 from pymongo import MongoClient
-mongo_client = MongoClient(
-    'mongodb+srv://owner:WNmlbnAiuBU5oQxn@cluster0-cppwj.gcp.mongodb.net/test?retryWrites=true&w=majority')
+mongo_client = MongoClient(MONGO_URI)
 db = mongo_client.jeju
 
 

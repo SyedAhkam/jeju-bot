@@ -1,11 +1,13 @@
 import discord
 from discord.ext import commands
+from dotenv import load_dotenv
+import os
 
-import json
+load_dotenv()
+MONGO_URI = os.getenv('MONGODB_URI')
 
 from pymongo import MongoClient
-mongo_client = MongoClient(
-    'mongodb+srv://owner:WNmlbnAiuBU5oQxn@cluster0-cppwj.gcp.mongodb.net/test?retryWrites=true&w=majority')
+mongo_client = MongoClient(MONGO_URI)
 db = mongo_client.jeju
 guilds_collection = db.guilds
 

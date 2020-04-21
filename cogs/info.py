@@ -157,7 +157,7 @@ class Info(commands.Cog):
         guild_categories = len(ctx.guild.categories)
         guild_emoji_limit = ctx.guild.emoji_limit
         guild_roles = len(ctx.guild.roles)
-        guild_created_at = ctx.guild.created_at
+        guild_created_at = ago.human(ctx.guild.created_at, 4)
 
         emojis_string = ''
 
@@ -194,7 +194,7 @@ class Info(commands.Cog):
 
         embed.add_field(name='Categories:', value=guild_categories, inline=True)
         embed.add_field(name='Roles:', value=guild_roles, inline=True)
-        embed.add_field(name='Created at:', value=guild_created_at, inline=True)
+        embed.add_field(name='Created:', value=guild_created_at, inline=True)
 
         embed.add_field(name='Emoji limit:', value=guild_emoji_limit, inline=True)
 

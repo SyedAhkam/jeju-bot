@@ -57,6 +57,8 @@ async def on_guild_remove(guild):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.errors.CheckFailure):
         await ctx.send('Looks like you don\'t have permission to access this command.')
+    elif isinstance(error, commands.errors.BadArgument):
+        await ctx.send('Invalid arguments given, please check the help command.')
     else:
         raise error
 

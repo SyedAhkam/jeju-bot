@@ -3,6 +3,18 @@ from discord.ext import commands
 
 import datetime, ago
 
+from dotenv import load_dotenv
+
+import os
+from pymongo import MongoClient
+
+load_dotenv()
+MONGO_URI = os.getenv('MONGODB_URI')
+
+mongo_client = MongoClient(MONGO_URI)
+db = mongo_client.jeju
+guilds_collection = db.guilds
+
 
 class Info(commands.Cog):
 
@@ -119,7 +131,76 @@ class Info(commands.Cog):
         embed_user.add_field(name='Roles:', value=f'```{roles_string}```', inline=False)
 
         await ctx.send(embed=embed_user)
+    
+    @commands.command(name='server', help='Get information about the server or guild.')
+    async def server(self, ctx):
 
+        guild = guilds_collection.find_one(filter={"guild_id": ctx.guild.id})
+
+        guild_id = ctx.guild.id
+        guild_name = ctx.guild.name
+        guild_prefix = guild["guild_prefix"]
+        guild_region = ctx.guild.region
+        guild_icon_url = ctx.guild.icon_url
+        guild_owner = ctx.guild.owner
+        guild_members = len(ctx.guild.members)
+        guild_verification = ctx.guild.verification_level
+        guild_features = ctx.guild.features
+        guild_emojis = ctx.guild.emojis
+        guild_afk_channel = ctx.guild.afk_channel
+        guild_default_notifications = ctx.guild.default_notifications
+        guild_boost_tier = ctx.guild.premium_tier
+        guild_boosters = ctx.guild.premium_subscription_count
+        guild_channels = len(ctx.guild.channels)
+        guild_text_channels = len(ctx.guild.text_channels)
+        guild_voice_channels = len(ctx.guild.voice_channels)
+        guild_categories = len(ctx.guild.categories)
+        guild_emoji_limit = ctx.guild.emoji_limit
+        guild_roles = len(ctx.guild.roles)
+        guild_created_at = ctx.guild.created_at
+
+        emojis_string = ''
+
+        for emoji in guild_emojis:
+            emojis_string += f'<:{emoji.name}:{emoji.id}>, '
+
+        if len(emojis_string) > 1024:
+            emojis_string = 'Too many emojis to show here.'
+
+        embed = discord.Embed(title='Server info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow(
+        ), footer=f'Requested by {ctx.author.name}')
+
+        embed.set_thumbnail(url=guild_icon_url)
+
+        embed.add_field(name='Name:', value=guild_name, inline=True)
+        embed.add_field(name='Id:', value=guild_id, inline=True)
+        embed.add_field(name='Prefix:', value=guild_prefix, inline=True)
+
+        embed.add_field(name='Region:', value=guild_region, inline=True)
+        embed.add_field(name='Owner:', value=guild_owner.mention, inline=True)
+        embed.add_field(name='Members:', value=guild_members, inline=True)
+
+        embed.add_field(name='Verification level:', value=guild_verification, inline=True)
+        embed.add_field(name='AFK Channel:', value=guild_afk_channel, inline=True)
+        embed.add_field(name='Default Notifications:', value=guild_default_notifications, inline=True)
+
+        embed.add_field(name='Boost Tier:', value=guild_boost_tier, inline=True)
+        embed.add_field(name='Boosters:', value=guild_boosters, inline=True)
+        embed.add_field(name='Features:', value=guild_features, inline=True)
+
+        embed.add_field(name='Text Channels:', value=guild_text_channels, inline=True)
+        embed.add_field(name='Voice Channels:', value=guild_voice_channels, inline=True)
+        embed.add_field(name='Total Channels:', value=guild_channels, inline=True)
+
+        embed.add_field(name='Categories:', value=guild_categories, inline=True)
+        embed.add_field(name='Roles:', value=guild_roles, inline=True)
+        embed.add_field(name='Created at:', value=guild_created_at, inline=True)
+
+        embed.add_field(name='Emoji limit:', value=guild_emoji_limit, inline=True)
+
+        embed.add_field(name='Emojis:', value=emojis_string, inline=True)
+
+        await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Info(bot))

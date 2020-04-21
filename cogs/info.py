@@ -49,13 +49,13 @@ class Info(commands.Cog):
                 name='UserTag:', value=user_name + '#' + user_discriminator, inline=True)
 
             if not user_name == display_name:
-                embed_author.add_field(name='Nickname:', value=display_name, inline=True)
+                embed_author.add_field(name='Nickname:', value=display_name, inline=False)
             else:
-                embed_author.add_field(name='Nickname:', value='None', inline=True)
+                embed_author.add_field(name='Nickname:', value='None', inline=False)
 
             embed_author.add_field(name='Created:', value=created_at, inline=True)
             embed_author.add_field(name='Joined:', value=joined_at, inline=True)
-            embed_author.add_field(name='Status:', value=status, inline=True)
+            embed_author.add_field(name='Status:', value=status, inline=False)
 
             if not activity:
                 embed_author.add_field(name='Activity:', value='No activity', inline=True)
@@ -99,14 +99,14 @@ class Info(commands.Cog):
 
         if not user_name == display_name:
             embed_user.add_field(
-                name='Nickname:', value=display_name, inline=True)
+                name='Nickname:', value=display_name, inline=False)
         else:
-            embed_user.add_field(name='Nickname:', value='None', inline=True)
+            embed_user.add_field(name='Nickname:', value='None', inline=False)
 
         embed_user.add_field(name='Bot:', value=is_bot, inline=True)
 
         embed_user.add_field(
-            name='Created:', value=created_at, inline=True)
+            name='Created:', value=created_at, inline=False)
         embed_user.add_field(
             name='Joined:', value=joined_at, inline=True)
         embed_user.add_field(name='Status:', value=status, inline=True)

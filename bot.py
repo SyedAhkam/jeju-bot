@@ -22,7 +22,7 @@ def get_prefix(bot, message):
     else:
         return "+"
 
-bot = commands.Bot(command_prefix=get_prefix)
+bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
 
 @bot.event
 async def on_ready():

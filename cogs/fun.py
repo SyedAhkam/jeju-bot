@@ -49,6 +49,7 @@ class Fun(commands.Cog):
 
         if not question:
             await ctx.send('You need to ask me a question too.')
+            return
 
         responses_collection = db.responses
         response = responses_collection.find_one()['8ball']

@@ -154,6 +154,15 @@ class Moderation(commands.Cog):
         await ctx.message.delete()
         await channel.send(message)
 
+    @commands.command(name='purge', help='Purges the number of messages specified.')
+    async def purge(self, ctx, messages: int=None):
+        if not messages:
+            await ctx.send('Please specify the number of messages to purge.')
+            return
+        
+        await ctx.message.delete()
+        deleted = await ctx.channel.purge(limit=messages)
+        await ctx.send(f'Purged {len(deleted)} messages successfully.', delete_after=3)
 
 def setup(bot):
     bot.add_cog(Moderation(bot))

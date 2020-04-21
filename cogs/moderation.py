@@ -155,6 +155,7 @@ class Moderation(commands.Cog):
         await channel.send(message)
 
     @commands.command(name='purge', help='Purges the number of messages specified.')
+    @commands.has_permissions(manage_messages=True)
     async def purge(self, ctx, messages: int=None):
         if not messages:
             await ctx.send('Please specify the number of messages to purge.')

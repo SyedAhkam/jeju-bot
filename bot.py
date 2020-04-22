@@ -21,10 +21,10 @@ guilds_collection = db.guilds
 def get_prefix(bot, message):
     if message.guild:
         guild = guilds_collection.find_one(filter={"guild_id": message.guild.id})
-        return guild['guild_prefix']
+        return commands.when_mentioned_or(guild['guild_prefix'])(bot, message)
 
     else:
-        return "+"
+        return commands.when_mentioned_or('+')(bot, message)
 
 bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
 
@@ -35,6 +35,22 @@ async def on_ready():
     activity = discord.Activity(type=discord.ActivityType.watching, name="+help | In Development")
     await bot.change_presence(status=discord.Status.online, activity=activity)
     print('Status changed')
+
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+    if bot.user.mentioned_in(message):
+        if message.guild:
+            guild = guilds_collection.find_one(filter={"guild_id": message.guild.id})
+            prefixes = [str(guild['guild_prefix']), '@mention']
+        else:
+            prefixes = ['+', '@mention']
+
+        prefixes = ', '.join(prefixes)
+        await message.channel.send(f'My prefixes are ``{prefixes}``')
+
+    await bot.process_commands(message)
 
 @bot.event
 async def on_guild_join(guild):

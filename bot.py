@@ -23,8 +23,7 @@ def get_prefix(bot, message):
         guild = guilds_collection.find_one(filter={"guild_id": message.guild.id})
         return commands.when_mentioned_or(guild['guild_prefix'])(bot, message)
 
-    else:
-        return commands.when_mentioned_or('+')(bot, message)
+    return commands.when_mentioned_or('+')(bot, message)
 
 bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
 

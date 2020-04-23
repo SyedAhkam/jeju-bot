@@ -202,5 +202,35 @@ class Info(commands.Cog):
 
         await ctx.send(embed=embed)
 
+    @commands.command(name='bot', help='Get some info about the bot.')
+    async def bot(self, ctx):
+        await ctx.send('Working on it.')
+
+        if ctx.guild:
+            guild = guilds_collection.find_one(filter={"guild_id": ctx.guild.id})
+            prefixes = [str(guild['guild_prefix']), '@mention']
+        else:
+            prefixes = ['+', '@mention']
+
+        prefixes = ', '.join(prefixes)
+
+        ping = round(ctx.bot.latency * 1000)
+
+        embed = discord.Embed(title='Bot info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow(
+        ), footer=f'Requested by {ctx.author.name}')
+
+        embed.add_field(name='Name:', value=ctx.bot.user.name, inline=True)
+        embed.add_field(name='Developer:', value='SyedAhkam#8605', inline=True)
+        embed.add_field(name='Library:', value=f'discord.py {discord.__version__}', inline=True)
+
+        embed.add_field(name='Guilds:', value=len(ctx.bot.guilds), inline=True)
+        embed.add_field(name='Users:', value=len(ctx.bot.users), inline=True)
+        embed.add_field(name='Prefixes:', value=prefixes, inline=True)
+
+        embed.add_field(name='Ping:', value=f'{ping}ms', inline=True)
+        embed.add_field(name='Source:', value='[link](https://github.com/SyedAhkam/jeju-bot/)')
+
+        await ctx.send(embed=embed)
+
 def setup(bot):
     bot.add_cog(Info(bot))

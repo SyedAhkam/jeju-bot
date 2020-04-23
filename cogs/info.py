@@ -204,7 +204,6 @@ class Info(commands.Cog):
 
     @commands.command(name='bot', help='Get some info about the bot.')
     async def bot(self, ctx):
-        await ctx.send('Working on it.')
 
         if ctx.guild:
             guild = guilds_collection.find_one(filter={"guild_id": ctx.guild.id})

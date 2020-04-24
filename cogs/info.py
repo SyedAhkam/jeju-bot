@@ -219,6 +219,7 @@ class Info(commands.Cog):
         embed.add_field(name='Users:', value=len(ctx.bot.users), inline=True)
         embed.add_field(name='Prefixes:', value=prefixes, inline=True)
 
+        embed.add_field(name='Uptime:', value=ago.human(ctx.bot.start_time, past_tense='{}'), inline=True)
         embed.add_field(name='Ping:', value=f'{ping}ms', inline=True)
         embed.add_field(name='Source:', value='[link](https://github.com/SyedAhkam/jeju-bot/)')
 

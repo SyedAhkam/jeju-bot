@@ -5,6 +5,7 @@ from pymongo import MongoClient
 
 import discord
 import os
+import datetime
 
 logging.basicConfig(level=logging.INFO)
 
@@ -28,11 +29,12 @@ def get_prefix(bot, message):
 
 
 bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
-
+bot.start_time = datetime.datetime.now()
 
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to discord!')
+
     activity = discord.Activity(type=discord.ActivityType.watching, name="+help | In Development")
     await bot.change_presence(status=discord.Status.online, activity=activity)
     print('Status changed')

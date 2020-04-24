@@ -1,24 +1,23 @@
 import logging
-
-logging.basicConfig(level=logging.INFO)
-
-import discord
-
 from discord.ext import commands
 from dotenv import load_dotenv
+from pymongo import MongoClient
 
+import discord
 import os
+
+logging.basicConfig(level=logging.INFO)
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 MONGO_URI = os.getenv('MONGODB_URI')
 
-from pymongo import MongoClient
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client.jeju
 
 guilds_collection = db.guilds
 bot_collection = db.bot
+
 
 def get_prefix(bot, message):
     if message.guild:
@@ -27,7 +26,9 @@ def get_prefix(bot, message):
 
     return commands.when_mentioned_or('+')(bot, message)
 
+
 bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
+
 
 @bot.event
 async def on_ready():
@@ -35,6 +36,7 @@ async def on_ready():
     activity = discord.Activity(type=discord.ActivityType.watching, name="+help | In Development")
     await bot.change_presence(status=discord.Status.online, activity=activity)
     print('Status changed')
+
 
 @bot.event
 async def on_message(message):
@@ -49,7 +51,7 @@ async def on_message(message):
             prefix = guild['guild_prefix']
         else:
             prefix = '+'
-        
+
         if message.content.startswith(prefix):
             await message.channel.send('Sorry, you have been blacklisted from using this bot.\nAsk the bot owner to remove you from blacklist.')
             return
@@ -66,26 +68,29 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
+
 @bot.event
 async def on_guild_join(guild):
 
-        post = {
-            "guild_id": guild.id,
-            "guild_name": guild.name,
-            "guild_prefix": "+",
-            "guild_region": guild.region,
-            "guild_icon": guild.icon,
-            "guild_owner_id": guild.owner_id,
-            "members": len(guild.members),
-            "guild_description": guild.description,
-            "guild_verification": guild.verification_level,
-            "guild_features": guild.features
-        }
-        guilds_collection.insert_one(post)
+    post = {
+        "guild_id": guild.id,
+        "guild_name": guild.name,
+        "guild_prefix": "+",
+        "guild_region": guild.region,
+        "guild_icon": guild.icon,
+        "guild_owner_id": guild.owner_id,
+        "members": len(guild.members),
+        "guild_description": guild.description,
+        "guild_verification": guild.verification_level,
+        "guild_features": guild.features
+    }
+    guilds_collection.insert_one(post)
+
 
 @bot.event
 async def on_guild_remove(guild):
     guilds_collection.delete_one(filter={"guild_id": guild.id})
+
 
 @bot.event
 async def on_command_error(ctx, error):

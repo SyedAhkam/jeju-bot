@@ -1,14 +1,13 @@
 from discord.ext import commands
+from dotenv import load_dotenv
+from pymongo import MongoClient
 
 import discord
-
 import os
-from dotenv import load_dotenv
 
 load_dotenv()
 MONGO_URI = os.getenv('MONGODB_URI')
 
-from pymongo import MongoClient
 
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client.jeju
@@ -18,6 +17,7 @@ bot_collection = db.bot
 
 
 class OwnerOnly(commands.Cog):
+
 
     def __init__(self, bot):
         self.bot = bot
@@ -110,6 +110,7 @@ class OwnerOnly(commands.Cog):
 
         bot_collection.update_one({}, {"$pull": {"blacklisted_users": user.id}})
         await ctx.send(f'User {user.name} with id: {user.id} have been removed from blacklist successfully.')
+
 
 def setup(bot):
     bot.add_cog(OwnerOnly(bot))

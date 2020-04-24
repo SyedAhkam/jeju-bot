@@ -1,12 +1,11 @@
-import discord
 from discord.ext import commands
-
-import datetime, ago
-
 from dotenv import load_dotenv
-
-import os
 from pymongo import MongoClient
+
+import discord
+import datetime
+import ago
+import os
 
 load_dotenv()
 MONGO_URI = os.getenv('MONGODB_URI')
@@ -17,6 +16,7 @@ guilds_collection = db.guilds
 
 
 class Info(commands.Cog):
+
 
     def __init__(self, bot):
         self.bot = bot
@@ -112,7 +112,7 @@ class Info(commands.Cog):
         embed_user.add_field(name='Bot:', value=is_bot, inline=True)
         embed_user.add_field(name='Created:', value=created_at, inline=False)
         embed_user.add_field(name='Joined:', value=joined_at, inline=True)
-        
+
         embed_user.add_field(name='Status:', value=status, inline=True)
 
         if not activity:
@@ -123,7 +123,7 @@ class Info(commands.Cog):
         embed_user.add_field(name='Roles:', value=f'```{roles_string}```', inline=False)
 
         await ctx.send(embed=embed_user)
-    
+
     @commands.command(name='server', help='Get information about the server or guild.')
     async def server(self, ctx):
 
@@ -224,6 +224,7 @@ class Info(commands.Cog):
         embed.add_field(name='Source:', value='[link](https://github.com/SyedAhkam/jeju-bot/)')
 
         await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Info(bot))

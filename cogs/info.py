@@ -49,16 +49,13 @@ class Info(commands.Cog):
             embed_author = discord.Embed(title='Your info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow(
             ), footer=f'Requested by {ctx.author.name}')
 
-            embed_author.set_author(
-                name=user_name, url=discord.Embed.Empty, icon_url=avatar_url)
+            embed_author.set_author(name=user_name, url=discord.Embed.Empty, icon_url=avatar_url)
 
             embed_author.set_thumbnail(url=avatar_url)
 
-            embed_author.add_field(
-                name='UserName:', value=user_name, inline=True)
+            embed_author.add_field(name='UserName:', value=user_name, inline=True)
             embed_author.add_field(name='UserID:', value=user_id, inline=True)
-            embed_author.add_field(
-                name='UserTag:', value=user_name + '#' + user_discriminator, inline=True)
+            embed_author.add_field(name='UserTag:', value=user_name + '#' + user_discriminator, inline=True)
 
             if not user_name == display_name:
                 embed_author.add_field(name='Nickname:', value=display_name, inline=False)
@@ -99,28 +96,23 @@ class Info(commands.Cog):
         for role in roles:
             roles_string += role.name + ', '
 
-        embed_user.set_author(
-            name=user_name, url=discord.Embed.Empty, icon_url=avatar_url)
+        embed_user.set_author(name=user_name, url=discord.Embed.Empty, icon_url=avatar_url)
 
         embed_user.set_thumbnail(url=avatar_url)
 
         embed_user.add_field(name='UserName:', value=user_name, inline=True)
         embed_user.add_field(name='UserID:', value=user_id, inline=True)
-        embed_user.add_field(
-            name='UserTag:', value=user_name + '#' + user_discriminator, inline=True)
+        embed_user.add_field(name='UserTag:', value=user_name + '#' + user_discriminator, inline=True)
 
         if not user_name == display_name:
-            embed_user.add_field(
-                name='Nickname:', value=display_name, inline=False)
+            embed_user.add_field(name='Nickname:', value=display_name, inline=False)
         else:
             embed_user.add_field(name='Nickname:', value='None', inline=False)
 
         embed_user.add_field(name='Bot:', value=is_bot, inline=True)
-
-        embed_user.add_field(
-            name='Created:', value=created_at, inline=False)
-        embed_user.add_field(
-            name='Joined:', value=joined_at, inline=True)
+        embed_user.add_field(name='Created:', value=created_at, inline=False)
+        embed_user.add_field(name='Joined:', value=joined_at, inline=True)
+        
         embed_user.add_field(name='Status:', value=status, inline=True)
 
         if not activity:
@@ -217,6 +209,8 @@ class Info(commands.Cog):
 
         embed = discord.Embed(title='Bot info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow(
         ), footer=f'Requested by {ctx.author.name}')
+
+        embed.set_thumbnail(url=ctx.bot.user.avatar_url)
 
         embed.add_field(name='Name:', value=ctx.bot.user.name, inline=True)
         embed.add_field(name='Developer:', value='SyedAhkam#8605', inline=True)

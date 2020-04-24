@@ -28,14 +28,13 @@ class Moderation(commands.Cog):
             await ctx.send('Please provide a reason.')
             return
 
-
-        kick_embed = discord.Embed(title='Kicked', description='A user have been kicked.',color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
+        kick_embed = discord.Embed(title='Kicked', description='A user have been kicked.', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
 
         kick_embed.set_author(name=user.name, url=discord.Embed.Empty, icon_url=user.avatar_url)
 
         kick_embed.add_field(name='Offender:', value=user.name + user.mention, inline=True)
         kick_embed.add_field(name='Reason:', value=reason, inline=True)
-        kick_embed.add_field(name='Responsible moderator:',value=ctx.author.name, inline=True)
+        kick_embed.add_field(name='Responsible moderator:', value=ctx.author.name, inline=True)
 
         kick_embed.set_footer(text=f'UserID: {user.id}')
 
@@ -59,13 +58,13 @@ class Moderation(commands.Cog):
 
         user = ctx.bot.get_user(id)
 
-        ban_embed = discord.Embed(title='Banned', description='A user have been Banned.',color=0xFFFFFF, timestamp=datetime.datetime.utcnow(), footer=user.id)
+        ban_embed = discord.Embed(title='Banned', description='A user have been Banned.', color=0xFFFFFF, timestamp=datetime.datetime.utcnow(), footer=user.id)
 
         ban_embed.set_author(name=user.name, url=discord.Embed.Empty, icon_url=user.avatar_url)
 
         ban_embed.add_field(name='Offender:', value=user.name + user.mention, inline=True)
         ban_embed.add_field(name='Reason:', value=reason, inline=True)
-        ban_embed.add_field(name='Responsible moderator:',value=ctx.author.name, inline=True)
+        ban_embed.add_field(name='Responsible moderator:', value=ctx.author.name, inline=True)
 
         ban_embed.set_footer(text=f'UserID: {user.id}')
 
@@ -85,12 +84,12 @@ class Moderation(commands.Cog):
 
         user = ctx.bot.get_user(id)
 
-        unban_embed = discord.Embed(title='Unbanned', description='A user have been Unbanned.',color=0xFFFFFF, timestamp=datetime.datetime.utcnow(), footer=user.id)
+        unban_embed = discord.Embed(title='Unbanned', description='A user have been Unbanned.', color=0xFFFFFF, timestamp=datetime.datetime.utcnow(), footer=user.id)
 
         unban_embed.set_author(name=user.name, url=discord.Embed.Empty, icon_url=user.avatar_url)
 
         unban_embed.add_field(name='Offender:', value=user.name + user.mention, inline=True)
-        unban_embed.add_field(name='Responsible moderator:',value=ctx.author.name, inline=True)
+        unban_embed.add_field(name='Responsible moderator:', value=ctx.author.name, inline=True)
 
         unban_embed.set_footer(text=f'UserID: {user.id}')
 

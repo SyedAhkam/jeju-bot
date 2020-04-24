@@ -18,7 +18,6 @@ bot_collection = db.bot
 
 class OwnerOnly(commands.Cog):
 
-
     def __init__(self, bot):
         self.bot = bot
 

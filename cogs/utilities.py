@@ -14,7 +14,6 @@ guilds_collection = db.guilds
 
 class Utilities(commands.Cog):
 
-
     def __init__(self, bot):
         self.bot = bot
 

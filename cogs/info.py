@@ -17,7 +17,6 @@ guilds_collection = db.guilds
 
 class Info(commands.Cog):
 
-
     def __init__(self, bot):
         self.bot = bot
 

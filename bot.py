@@ -16,7 +16,9 @@ MONGO_URI = os.getenv('MONGODB_URI')
 from pymongo import MongoClient
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client.jeju
+
 guilds_collection = db.guilds
+bot_collection = db.bot
 
 def get_prefix(bot, message):
     if message.guild:
@@ -30,7 +32,6 @@ bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to discord!')
-    #game = discord.Game(name="+help | In Development")
     activity = discord.Activity(type=discord.ActivityType.watching, name="+help | In Development")
     await bot.change_presence(status=discord.Status.online, activity=activity)
     print('Status changed')
@@ -39,6 +40,20 @@ async def on_ready():
 async def on_message(message):
     if message.author == bot.user:
         return
+
+    blacklisted_users = bot_collection.find_one()['blacklisted_users']
+    if message.author.id in blacklisted_users:
+
+        if message.guild:
+            guild = guilds_collection.find_one(filter={"guild_id": message.guild.id})
+            prefix = guild['guild_prefix']
+        else:
+            prefix = '+'
+        
+        if message.content.startswith(prefix):
+            await message.channel.send('Sorry, you have been blacklisted from using this bot.\nAsk the bot owner to remove you from blacklist.')
+            return
+
     if bot.user.mentioned_in(message):
         if message.guild:
             guild = guilds_collection.find_one(filter={"guild_id": message.guild.id})

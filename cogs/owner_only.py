@@ -1,5 +1,7 @@
 from discord.ext import commands
 
+import discord
+
 import os
 from dotenv import load_dotenv
 
@@ -10,7 +12,9 @@ from pymongo import MongoClient
 
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client.jeju
+
 guilds_collection = db.guilds
+bot_collection = db.bot
 
 
 class OwnerOnly(commands.Cog):
@@ -84,6 +88,28 @@ class OwnerOnly(commands.Cog):
 
         else:
             await msg.edit(content=f'No guild(s) were detected or an error occured.\nTotalGuilds in db: {total_guilds}')
+
+    @commands.command(name='blacklist', help='Blacklist a user from using the bot commands.')
+    @commands.is_owner()
+    async def blacklist(self, ctx, user: discord.Member=None):
+
+        if not user:
+            await ctx.send('Please specify a user to blacklist.')
+            return
+
+        bot_collection.update_one({}, {"$push": {"blacklisted_users": user.id}})
+        await ctx.send(f'User {user.name} with id: {user.id} have been blacklisted successfully.')
+
+    @commands.command(name='unblacklist', help='Remove a user from blacklist.')
+    @commands.is_owner()
+    async def unblacklist(self, ctx, user: discord.Member=None):
+
+        if not user:
+            await ctx.send('Please specify a user to unblacklist.')
+            return
+
+        bot_collection.update_one({}, {"$pull": {"blacklisted_users": user.id}})
+        await ctx.send(f'User {user.name} with id: {user.id} have been removed from blacklist successfully.')
 
 def setup(bot):
     bot.add_cog(OwnerOnly(bot))

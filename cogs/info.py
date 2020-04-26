@@ -158,6 +158,9 @@ class Info(commands.Cog):
         if len(emojis_string) > 1024:
             emojis_string = 'Too many emojis to show here.'
 
+        if not emojis_string:
+            emojis_string = 'No emojis in this server.'
+
         embed = discord.Embed(title='Server info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow(
         ), footer=f'Requested by {ctx.author.name}')
 

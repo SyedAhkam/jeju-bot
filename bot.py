@@ -84,7 +84,9 @@ async def on_guild_join(guild):
         "members": len(guild.members),
         "guild_description": guild.description,
         "guild_verification": guild.verification_level,
-        "guild_features": guild.features
+        "guild_features": guild.features,
+        "mod_role": None,
+        "modlog_channel": None
     }
     guilds_collection.insert_one(post)
 
@@ -101,6 +103,7 @@ async def on_command_error(ctx, error):
     elif isinstance(error, commands.errors.BadArgument):
         await ctx.send('Invalid arguments given, please check the help command.')
     else:
+        await ctx.send('An error occured.')
         raise error
 
 for filename in os.listdir('./cogs'):

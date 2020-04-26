@@ -42,6 +42,16 @@ class Config(commands.Cog):
         guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {'$set': {"modlog_channel": channel.id}})
         await ctx.send(f'Channel ``{channel.name}`` with ID: ``{channel.id}`` has been set up as a ModLogs channel successfully.')
 
+    @commands.command(name='change_prefix', help='Change the bot\'s prefix.')
+    @commands.has_permissions(administrator=True)
+    async def change_prefix(self, ctx, prefix=None):
+        if not prefix:
+            await ctx.send('Please specify a prefix.')
+            return
+
+        guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {'$set': {"guild_prefix": prefix}})
+
+        await ctx.send(f'Prefix set to ``{prefix}``')
 
 def setup(bot):
     bot.add_cog(Config(bot))

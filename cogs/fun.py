@@ -73,12 +73,16 @@ class Fun(commands.Cog):
     async def meme(self, ctx):
 
         async with aiohttp.ClientSession() as session:
-            json = await fetch(session, 'https://meme-api.herokuapp.com/gimme')
-            
-        post_link = json['postLink']
-        subreddit = json['subreddit']
-        title = json['title']
-        image_url = json['url']
+            response = await fetch(session, 'https://meme-api.herokuapp.com/gimme')
+        
+        if not response:
+            await ctx.send('Something went wrong with the API, Please try again later.')
+            return
+
+        post_link = response['postLink']
+        subreddit = response['subreddit']
+        title = response['title']
+        image_url = response['url']
 
         embed = discord.Embed(title='A random meme for you', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
         embed.set_footer(text='Powered by MemeAPI')

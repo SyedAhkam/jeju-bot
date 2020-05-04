@@ -100,7 +100,7 @@ class Moderation(commands.Cog):
             await ctx.send(f'User {user.name} has been banned successfully.')
             return
 
-        ban_embed = discord.Embed(title='Banned', description='A user have been Banned.', color=0xFFFFFF, timestamp=datetime.datetime.utcnow(), footer=user.id)
+        ban_embed = discord.Embed(title='Banned', description='A user have been Banned.', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
 
         ban_embed.set_author(name=user.name, url=discord.Embed.Empty, icon_url=user.avatar_url)
 
@@ -143,7 +143,7 @@ class Moderation(commands.Cog):
             await ctx.send(f'User {user.name} has been unbanned successfully.')
             return
 
-        unban_embed = discord.Embed(title='Unbanned', description='A user have been Unbanned.', color=0xFFFFFF, timestamp=datetime.datetime.utcnow(), footer=user.id)
+        unban_embed = discord.Embed(title='Unbanned', description='A user have been Unbanned.', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
 
         unban_embed.set_author(name=user.name, url=discord.Embed.Empty, icon_url=user.avatar_url)
 

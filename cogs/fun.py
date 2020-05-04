@@ -61,8 +61,9 @@ class Fun(commands.Cog):
 
         choosen_response = random.choice(response)
 
-        embed = discord.Embed(title=f'You asked \'{question}\'', color=0xFFFFFF, timestamp=datetime.datetime.utcnow(
-        ), footer=f'Asked by {ctx.author.name}')
+        embed = discord.Embed(title=f'You asked \'{question}\'', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
+
+        embed.set_footer(text=f'Asked by {ctx.author.name}')
 
         embed.add_field(name='Magic 8ball thinks:', value=choosen_response, inline=True)
 

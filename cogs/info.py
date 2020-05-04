@@ -45,10 +45,11 @@ class Info(commands.Cog):
             for role in roles:
                 roles_string += role.name + ', '
 
-            embed_author = discord.Embed(title='Your info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow(
-            ), footer=f'Requested by {ctx.author.name}')
+            embed_author = discord.Embed(title='Your info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
 
             embed_author.set_author(name=user_name, url=discord.Embed.Empty, icon_url=avatar_url)
+
+            embed_author.set_footer(text=f'Requested by {ctx.author.name}')
 
             embed_author.set_thumbnail(url=avatar_url)
 
@@ -75,8 +76,9 @@ class Info(commands.Cog):
             await ctx.send(embed=embed_author)
             return
 
-        embed_user = discord.Embed(title=f'{user.name}\'s info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow(
-        ), footer=f'Requested by {ctx.author.name}')
+        embed_user = discord.Embed(title=f'{user.name}\'s info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
+
+        embed_user.set_footer(text=f'Requested by {ctx.author.name}')
 
         user_name = user.name
         user_id = user.id
@@ -161,8 +163,9 @@ class Info(commands.Cog):
         if not emojis_string:
             emojis_string = 'No emojis in this server.'
 
-        embed = discord.Embed(title='Server info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow(
-        ), footer=f'Requested by {ctx.author.name}')
+        embed = discord.Embed(title='Server info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
+
+        embed.set_footer(text=f'Requested by {ctx.author.name}')
 
         embed.set_thumbnail(url=guild_icon_url)
 
@@ -209,8 +212,9 @@ class Info(commands.Cog):
 
         ping = round(ctx.bot.latency * 1000)
 
-        embed = discord.Embed(title='Bot info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow(
-        ), footer=f'Requested by {ctx.author.name}')
+        embed = discord.Embed(title='Bot info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
+
+        embed.set_footer(text=f'Requested by {ctx.author.name}')
 
         embed.set_thumbnail(url=ctx.bot.user.avatar_url)
 

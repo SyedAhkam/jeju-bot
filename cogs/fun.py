@@ -6,12 +6,17 @@ import discord
 import random
 import datetime
 import os
+import aiohttp
 
 load_dotenv()
 MONGO_URI = os.getenv('MONGODB_URI')
 
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client.jeju
+
+async def fetch(session, url):
+    async with session.get(url) as response:
+        return await response.json()
 
 
 class Fun(commands.Cog):
@@ -63,6 +68,26 @@ class Fun(commands.Cog):
 
         await ctx.send(embed=embed)
 
+    @commands.command(name='meme', help='Get a random meme from reddit.')
+    async def meme(self, ctx):
+
+        async with aiohttp.ClientSession() as session:
+            json = await fetch(session, 'https://meme-api.herokuapp.com/gimme')
+            
+        post_link = json['postLink']
+        subreddit = json['subreddit']
+        title = json['title']
+        image_url = json['url']
+
+        embed = discord.Embed(title='A random meme for you', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
+        embed.set_footer(text='Powered by MemeAPI')
+        embed.set_image(url=image_url)
+
+        embed.add_field(name='Title:', value=title)
+        embed.add_field(name='PostLink:', value=f'[Post]({post_link})')
+        embed.add_field(name='SubReddit', value=subreddit)
+
+        await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Fun(bot))

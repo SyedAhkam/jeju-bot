@@ -37,6 +37,7 @@ class Utilities(commands.Cog):
 
         embed.add_field(name='React', value='✅Yes ❌No')
 
+        await ctx.message.delete()
         msg = await ctx.send(embed=embed)
 
         await msg.add_reaction('✅')

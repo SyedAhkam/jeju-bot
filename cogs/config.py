@@ -18,6 +18,7 @@ class Config(commands.Cog):
         self.bot = bot
 
     @commands.command(name='set_mod_role', help='Set a role to be used as a ModRole.')
+    @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def set_mod_role(self, ctx, role: commands.RoleConverter=None):
         if not role:
@@ -33,6 +34,7 @@ class Config(commands.Cog):
         await ctx.send(f'Role ``{role.name}`` with ID: ``{role.id}`` has been set as a ModRole successfully.')
 
     @commands.command(name='set_modlog_channel', help='Set a channel to be used for ModLogs.')
+    @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def set_modlog_channel(self, ctx, channel: commands.TextChannelConverter=None):
         if not channel:
@@ -43,6 +45,7 @@ class Config(commands.Cog):
         await ctx.send(f'Channel ``{channel.name}`` with ID: ``{channel.id}`` has been set up as a ModLogs channel successfully.')
 
     @commands.command(name='change_prefix', help='Change the bot\'s prefix.')
+    @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def change_prefix(self, ctx, prefix=None):
         if not prefix:

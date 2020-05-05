@@ -6,6 +6,7 @@ import discord
 import datetime
 import ago
 import os
+import sys, platform
 
 load_dotenv()
 MONGO_URI = os.getenv('MONGODB_URI')
@@ -26,6 +27,7 @@ class Info(commands.Cog):
         await ctx.send(f'Pong!\n{ping}ms')
 
     @commands.command()
+    @commands.guild_only()
     async def user(self, ctx, user: commands.MemberConverter = None):
 
         if not user:
@@ -126,6 +128,7 @@ class Info(commands.Cog):
         await ctx.send(embed=embed_user)
 
     @commands.command(name='server', help='Get information about the server or guild.')
+    @commands.guild_only()
     async def server(self, ctx):
 
         guild = guilds_collection.find_one(filter={"guild_id": ctx.guild.id})
@@ -212,6 +215,10 @@ class Info(commands.Cog):
 
         ping = round(ctx.bot.latency * 1000)
 
+        python_version = f'{str(sys.version_info.major)}.{str(sys.version_info.minor)}.{str(sys.version_info.micro)}'
+        operating_system = platform.system()
+        processor = platform.processor()
+
         embed = discord.Embed(title='Bot info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
 
         embed.set_footer(text=f'Requested by {ctx.author.name}')
@@ -229,6 +236,10 @@ class Info(commands.Cog):
         embed.add_field(name='Uptime:', value=ago.human(ctx.bot.start_time, past_tense='{}'), inline=True)
         embed.add_field(name='Ping:', value=f'{ping}ms', inline=True)
         embed.add_field(name='Source:', value='[link](https://github.com/SyedAhkam/jeju-bot/)')
+
+        embed.add_field(name='Python:', value=python_version, inline=True)
+        embed.add_field(name='OperatingSystem:', value=operating_system, inline=True)
+        embed.add_field(name='Processer', value=processor, inline=True)
 
         await ctx.send(embed=embed)
 

@@ -32,6 +32,7 @@ class Moderation(commands.Cog):
         self.bot = bot
 
     @commands.command(name='kick', help='Kicks a specified user.')
+    @commands.guild_only()
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, user: commands.MemberConverter=None, *, reason=None):
 
@@ -75,6 +76,7 @@ class Moderation(commands.Cog):
         await ctx.send(f'User {user.name} has been kicked successfully.')
 
     @commands.command(name='ban', help='Bans a specified user.')
+    @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, user: commands.MemberConverter=None, *, reason=None):
 
@@ -118,6 +120,7 @@ class Moderation(commands.Cog):
         await ctx.send(f'User {user.name} has been banned successfully.')
 
     @commands.command(name='unban', help='Unbans a specified user.')
+    @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, user: commands.UserConverter=None):
 

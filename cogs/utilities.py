@@ -85,17 +85,17 @@ class Utilities(commands.Cog):
         author = response['author']
         author_url = response['author_url']
 
+        if not example:
+            example = 'None'
+
         embed = discord.Embed(title='Urban Dictionary', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
 
         embed.set_footer(text='Powered by Unofficial UrbanDictionary Api')
 
         embed.add_field(name='Term:', value=term, inline=True)
         embed.add_field(name='URL:', value=f'[Urban]({url})', inline=True)
-        embed.add_field(name='Definition:', value=definition, inline=False)
-        if not example:
-            embed.add_field(name='Example:', value='None', inline=True)
-        else:    
-            embed.add_field(name='Example:', value=example, inline=True)
+        embed.add_field(name='Definition:', value=definition, inline=False)   
+        embed.add_field(name='Example:', value=example, inline=True)
         embed.add_field(name='Author:', value=f'[{author}]({author_url})', inline=True)
 
         await ctx.send(embed=embed)

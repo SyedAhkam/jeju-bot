@@ -16,6 +16,8 @@ db = mongo_client.jeju
 
 async def fetch(session, url):
     async with session.get(url) as response:
+        if not response.status == 200:
+            return False
         return await response.json()
 
 

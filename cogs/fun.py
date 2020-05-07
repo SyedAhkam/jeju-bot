@@ -27,10 +27,12 @@ class Fun(commands.Cog):
         self.bot = bot
 
     @commands.command(name='hello', help='Says back hello to the user.')
+    @commands.cooldown(1, 3, type=commands.BucketType.user)
     async def hello(self, ctx):
         await ctx.send(f'Hello {ctx.author.name}')
 
     @commands.command(name='roll', help='Simulates a dice roll.')
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
     async def roll(self, ctx, number_of_dice: int=None, number_of_sides: int=6):
 
         if not number_of_dice:
@@ -52,6 +54,7 @@ class Fun(commands.Cog):
         await ctx.send(', '.join(dice))
 
     @commands.command(name='8ball', aliases=['ball'], help='Ask any yes or no question to 8ball.')
+    @commands.cooldown(1, 3, type=commands.BucketType.user)
     async def _8ball(self, ctx, *, question=None):
 
         if not question:
@@ -72,6 +75,7 @@ class Fun(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command(name='meme', help='Get a random meme from reddit.')
+    @commands.cooldown(1, 3, type=commands.BucketType.user)
     async def meme(self, ctx):
 
         async with aiohttp.ClientSession() as session:

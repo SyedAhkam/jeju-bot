@@ -34,6 +34,7 @@ class Moderation(commands.Cog):
     @commands.command(name='kick', help='Kicks a specified user.')
     @commands.guild_only()
     @commands.has_permissions(kick_members=True)
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
     async def kick(self, ctx, user: commands.MemberConverter=None, *, reason=None):
 
         if not user:
@@ -78,6 +79,7 @@ class Moderation(commands.Cog):
     @commands.command(name='ban', help='Bans a specified user.')
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
     async def ban(self, ctx, user: commands.MemberConverter=None, *, reason=None):
 
         if not user:
@@ -122,6 +124,7 @@ class Moderation(commands.Cog):
     @commands.command(name='unban', help='Unbans a specified user.')
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
     async def unban(self, ctx, user: commands.UserConverter=None):
 
         if not user:
@@ -162,7 +165,9 @@ class Moderation(commands.Cog):
         await ctx.send(f'User {user.name} has been unbanned successfully.')
 
     @commands.command(name='dm', help='DM\'s a specified user.')
+    @commands.guild_only()
     @is_mod()
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
     async def dm(self, ctx, user: commands.MemberConverter=None, *, message=None):
 
         if not user:
@@ -178,7 +183,9 @@ class Moderation(commands.Cog):
         await user.dm_channel.send(message)
 
     @commands.command(name='say', help='Says Something given.')
+    @commands.guild_only()
     @is_mod()
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
     async def say(self, ctx, *, message=None):
 
         if not message:
@@ -189,7 +196,9 @@ class Moderation(commands.Cog):
         await ctx.send(message)
 
     @commands.command(name='say_in_channel', help='Says Something given in a specified channel.')
+    @commands.guild_only()
     @is_mod()
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
     async def say_in_channel(self, ctx, channel: commands.TextChannelConverter=None, *, message=None):
 
         if not channel:
@@ -204,7 +213,9 @@ class Moderation(commands.Cog):
         await channel.send(message)
 
     @commands.command(name='purge', help='Purges the number of messages specified.')
+    @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
     async def purge(self, ctx, messages: int=None):
         if not messages:
             await ctx.send('Please specify the number of messages to purge.')

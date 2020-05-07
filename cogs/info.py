@@ -22,12 +22,14 @@ class Info(commands.Cog):
         self.bot = bot
 
     @commands.command()
+    @commands.cooldown(1, 3, type=commands.BucketType.user)
     async def ping(self, ctx):
         ping = round(ctx.bot.latency * 1000)
         await ctx.send(f'Pong!\n{ping}ms')
 
     @commands.command()
     @commands.guild_only()
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
     async def user(self, ctx, user: commands.MemberConverter = None):
 
         if not user:
@@ -129,6 +131,7 @@ class Info(commands.Cog):
 
     @commands.command(name='server', help='Get information about the server or guild.')
     @commands.guild_only()
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
     async def server(self, ctx):
 
         guild = guilds_collection.find_one(filter={"guild_id": ctx.guild.id})
@@ -203,6 +206,7 @@ class Info(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command(name='bot', help='Get some info about the bot.')
+    @commands.cooldown(1, 3, type=commands.BucketType.user)
     async def bot(self, ctx):
 
         if ctx.guild:

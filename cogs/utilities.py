@@ -26,6 +26,7 @@ class Utilities(commands.Cog):
         self.bot = bot
 
     @commands.command(name='invite', help='Get the bot\'s invite link.')
+    @commands.cooldown(1, 3, type=commands.BucketType.user)
     async def invite(self, ctx):
         # invite_url = discord.utils.oauth_url(client_id='699595477934538782', permissions='administrator', guild=None)
         invite_url = 'https://discordapp.com/api/oauth2/authorize?client_id=699595477934538782&permissions=8&scope=bot'
@@ -38,6 +39,7 @@ class Utilities(commands.Cog):
     
     @commands.command(name='poll', help='Build a yes or no poll.')
     @commands.has_permissions(administrator=True)
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
     async def poll(self, ctx, *, question=None):
         if not question:
             await ctx.send('Please provide a question.')
@@ -55,6 +57,7 @@ class Utilities(commands.Cog):
         await msg.add_reaction('❌')
 
     @commands.command(name='lmgtfy', help='Help your friends who doesn\'t know how to use google.')
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
     async def lmgtfy(self, ctx, *, query=None):
         if not query:
             await ctx.send('Please provide a query.')
@@ -67,6 +70,7 @@ class Utilities(commands.Cog):
         await ctx.send(url)
 
     @commands.command(name='urban', help='Get definition of a term by urban dictionary')
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
     async def urban(self, ctx, *, query=None):
         if not query:
             await ctx.send('Please provide a query.')

@@ -98,12 +98,51 @@ async def on_guild_remove(guild):
 
 @bot.event
 async def on_command_error(ctx, error):
-    if isinstance(error, commands.errors.CheckFailure):
-        await ctx.send('Looks like you don\'t have permission to access this command.')
+
+    ignored = (commands.errors.CommandNotFound)
+
+    error = getattr(error, "original", error)
+
+    if isinstance(error, ignored):
+        return
+
+    elif isinstance(error, commands.errors.DisabledCommand):
+        return await ctx.send(f'This command has been disabled by the owner, Ask them to enable it.')
+
+    elif isinstance(error, commands.errors.NoPrivateMessage):
+            try:
+                return await ctx.author.send(f'{ctx.command} command can not be used in Private Messages.')
+            except:
+                pass
+    
+    elif isinstance(error, commands.errors.CheckFailure):
+        if isinstance(error, commands.errors.NotOwner):
+            return await ctx.send('This command is only accessible by the owner of the bot.')
+        elif isinstance(error, commands.errors.MissingPermissions):
+            return await ctx.send(f'Looks like you don\'t have permission to access this command.\nPermissions required: ``{error.missing_perms}``')
+        elif isinstance(error, commands.errors.BotMissingPermissions):
+            return await ctx.send(f'Bot need these permissions to run that command, ``{error.missing_perms}``')
+        elif isinstance(error, commands.errors.MissingRole):
+            return await ctx.send(f'You need this role to access this command: ``{error.missing_role}``')
+    
     elif isinstance(error, commands.errors.BadArgument):
-        await ctx.send('Invalid arguments given, please check the help command.')
+        return await ctx.send('Invalid arguments given, please check the help command.')
+    
+    elif isinstance(error, commands.errors.CommandOnCooldown):
+        return await ctx.send(f'This command is on cooldown.\n Please wait ``{round(error.retry_after)}`` more seconds.')
+
+    elif isinstance(error, commands.errors.ExtensionError):
+        if isinstance(error,commands.errors.ExtensionNotFound):
+            return await ctx.send(f'Extension with name ``{error.name}`` not found.')
+        elif isinstance(error,commands.errors.ExtensionAlreadyLoaded):
+            return await ctx.send(f'Extension with name ``{error.name}`` already loaded.')
+        elif isinstance(error,commands.errors.ExtensionNotLoaded):
+            return await ctx.send(f'Extension with name ``{error.name}`` not loaded.')
+        elif isinstance(error, commands.errors.ExtensionFailed):
+            return await ctx.send(f'Extension with name ``{error.name}`` failed to load.')
+    
     else:
-        await ctx.send('An error occured.')
+        await ctx.send('An unexpected error occured.')
         raise error
 
 for filename in os.listdir('./cogs'):

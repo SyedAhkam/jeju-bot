@@ -110,6 +110,53 @@ class OwnerOnly(commands.Cog):
         bot_collection.update_one({}, {"$pull": {"blacklisted_users": user.id}})
         await ctx.send(f'User {user.name} with id: {user.id} have been removed from blacklist successfully.')
 
+    @commands.command(name='change_presence', help='Change presence of the bot.')
+    @commands.is_owner()
+    async def change_presence(self, ctx, presence_type=None, *, presence_text=None):
+
+        types = ['playing', 'streaming', 'listening', 'watching']
+
+        if not presence_type:
+            await ctx.send('Please provide a type of presence.')
+            return
+
+        if not presence_text:
+            await ctx.send('Please provide a text to be set as the bot\'s presence.')
+            return
+        
+        if presence_type.lower() == 'playing':
+            game = discord.Game(presence_text)
+            await ctx.bot.change_presence(status=discord.Status.online, activity=game)
+
+            await ctx.send(f'Changed presence to ``{presence_text}``')
+
+        elif presence_type.lower() == 'streaming':
+            stream = discord.Streaming(name=presence_text, url='https://www.twitch.tv/syed_ahkam')
+            await ctx.bot.change_presence(status=discord.Status.online, activity=stream)
+
+            await ctx.send(f'Changed presence to ``{presence_text}``')
+
+        elif presence_type.lower() == 'listening':
+            listening = discord.Activity(type=discord.ActivityType.listening, name=presence_text)
+            await ctx.bot.change_presence(status=discord.Status.online, activity=listening)
+
+            await ctx.send(f'Changed presence to ``{presence_text}``')
+
+        elif presence_type.lower() == 'watching':
+            activity = discord.Activity(type=discord.ActivityType.watching, name=presence_text)
+            await ctx.bot.change_presence(status=discord.Status.online, activity=activity)
+
+            await ctx.send(f'Changed presence to ``{presence_text}``')
+        
+        else:
+            await ctx.send(f'Invalid Presence Type\nAvailable types: ``{",".join(types)}``')
+
+    @commands.command(name='logout', help='Logout the bot from discord api.')
+    @commands.is_owner()
+    async def logout(self, ctx):
+        await ctx.send('Bot is now logging out, Bye.')
+        print('Bot logged out through logout command.')
+        await ctx.bot.logout()
 
 def setup(bot):
     bot.add_cog(OwnerOnly(bot))

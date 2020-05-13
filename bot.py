@@ -86,7 +86,8 @@ async def on_guild_join(guild):
         "guild_verification": guild.verification_level,
         "guild_features": guild.features,
         "mod_role": None,
-        "modlog_channel": None
+        "modlog_channel": None,
+        "venting_channel": None
     }
     guilds_collection.insert_one(post)
 

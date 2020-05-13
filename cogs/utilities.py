@@ -110,6 +110,7 @@ class Utilities(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command(name='anime', help='Get information about a specific anime.')
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
     async def anime(self, ctx, *, anime_name=None):
         if not anime_name:
             await ctx.send('Please provide an anime name to search.')
@@ -169,6 +170,42 @@ class Utilities(commands.Cog):
 
         await ctx.send(embed=embed)
 
+    @commands.command(name='vent', help='Anonymously vent to a server\'s venting channel through DM\'s')
+    @commands.cooldown(1, 3, type=commands.BucketType.user)
+    async def vent(self, ctx, guild_id: int=None, *, query=None):
+        
+        if ctx.guild:
+            await ctx.send('This command can only be used in DM\'s')
+            return
+        
+        if not guild_id:
+            await ctx.send('Please provide a guild_id.')
+            return
+        
+        if not query:
+            await ctx.send('Please provide a query.')
+            return
+        
+        guild = ctx.bot.get_guild(guild_id)
+
+        guild_doc = guilds_collection.find_one(filter={"guild_id": guild.id})
+
+        if not 'venting_channel' in guild_doc:
+            await ctx.send('Please ask the server admins to setup a venting channel using the command ``set_venting_channel``.')
+            return
+        
+        if not guild_doc['venting_channel']:
+            await ctx.send('no')
+            return
+        
+        venting_channel_id = guild_doc['venting_channel']
+
+        venting_channel = guild.get_channel(venting_channel_id)
+
+        await venting_channel.send("**Vent:**" + "\n" + query)
+        await ctx.send('Successfully sent your venting message.')
+
+        #print(venting_channel)
 
 def setup(bot):
     bot.add_cog(Utilities(bot))

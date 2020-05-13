@@ -138,9 +138,13 @@ class Utilities(commands.Cog):
         start_datetime_string = start_datetime_object.ctime()
 
         end_date = first_result['end_date']
-        end_date_only = end_date.split('T')[0]
-        end_datetime_object = datetime.datetime.strptime(end_date_only, '%Y-%m-%d')
-        end_datetime_string = end_datetime_object.ctime()
+
+        if end_date:
+            end_date_only = end_date.split('T')[0]
+            end_datetime_object = datetime.datetime.strptime(end_date_only, '%Y-%m-%d')
+            end_datetime_string = end_datetime_object.ctime()
+        else:
+            end_datetime_string = 'Not ended'
 
         members = first_result['members']
         rated = first_result['rated']

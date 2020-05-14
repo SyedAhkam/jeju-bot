@@ -44,7 +44,21 @@ class Config(commands.Cog):
             return
         
         guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {'$set': {"modlog_channel": channel.id}})
+
         await ctx.send(f'Channel ``{channel.name}`` with ID: ``{channel.id}`` has been set up as a ModLogs channel successfully.')
+
+    @commands.command(name='set_venting_channel', help='Setup a venting channnel to vent anonymously')
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @commands.cooldown(1, 10, type=commands.BucketType.user)
+    async def set_venting_channel(self, ctx, channel: commands.TextChannelConverter=None):
+        if not channel:
+            await ctx.send('Please provide a channel to be set as a venting channel.')
+            return
+
+        guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {"$set": {"venting_channel": channel.id}})
+
+        await ctx.send(f'Channel ``{channel.name}`` with ID: ``{channel.id}`` has been set up as a Venting channel successfully.')
 
     @commands.command(name='change_prefix', help='Change the bot\'s prefix.')
     @commands.guild_only()

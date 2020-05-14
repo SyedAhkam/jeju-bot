@@ -195,7 +195,7 @@ class Utilities(commands.Cog):
             return
         
         if not guild_doc['venting_channel']:
-            await ctx.send('no')
+            await ctx.send('Please ask the server admins to setup a venting channel using the command ``set_venting_channel``.')
             return
         
         venting_channel_id = guild_doc['venting_channel']

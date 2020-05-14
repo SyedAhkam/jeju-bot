@@ -205,7 +205,18 @@ class Utilities(commands.Cog):
         await venting_channel.send("**Vent:**" + "\n" + query)
         await ctx.send('Successfully sent your venting message.')
 
-        #print(venting_channel)
+    @commands.command(name='emoji', help='Get your favorite emoji as a picture.')
+    @commands.cooldown(1,3, type=commands.BucketType.user)
+    async def emoji(self, ctx, emoji: commands.EmojiConverter= None):
+        if not emoji:
+            await ctx.send('Please provide a emoji.')
+            return
+        
+        embed = discord.Embed(color=0xFFFFFF)
+
+        embed.set_image(url=emoji.url)
+
+        await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Utilities(bot))

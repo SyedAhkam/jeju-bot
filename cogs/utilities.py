@@ -202,6 +202,8 @@ class Utilities(commands.Cog):
 
         venting_channel = guild.get_channel(venting_channel_id)
 
+        print(f'{ctx.author.name} with id: {ctx.author.id} used the venting command.')
+
         await venting_channel.send("**Vent:**" + "\n" + query)
         await ctx.send('Successfully sent your venting message.')
 

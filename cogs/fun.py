@@ -26,10 +26,10 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name='hello', help='Says back hello to the user.')
+    @commands.command(name='hello', help='Says back hello to the user.', aliases=['hi', 'hey'])
     @commands.cooldown(1, 3, type=commands.BucketType.user)
     async def hello(self, ctx):
-        await ctx.send(f'Hello {ctx.author.name}')
+        await ctx.send(f'Hello {ctx.author.name}.')
 
     @commands.command(name='roll', help='Simulates a dice roll.')
     @commands.cooldown(1, 5, type=commands.BucketType.user)

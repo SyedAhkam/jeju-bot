@@ -70,6 +70,90 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
+@bot.event
+async def on_member_join(member):
+    print('Member joined')
+
+    guild_doc = guilds_collection.find_one(filter={"guild_id": member.guild.id})
+
+    if not 'join_channel' in guild_doc:
+        return
+    
+    if not guild_doc['join_channel']:
+        return
+    
+    if not 'join_message' in guild_doc:
+        return
+    
+    if not guild_doc['join_message']:
+        return
+    
+    join_channel = member.guild.get_channel(guild_doc['join_channel'])
+    
+    formatted_message = guild_doc['join_message']
+
+    if '{user}' in formatted_message:
+            formatted_message = formatted_message.replace('{user}', member.name)
+
+    if '{user_mention}' in formatted_message:
+        formatted_message = formatted_message.replace('{user_mention}', member.mention)
+    
+    if '{user_id}' in formatted_message:
+        formatted_message = formatted_message.replace('{user_id}', str(member.id))
+    
+    if '{user_tag}' in formatted_message:
+        formatted_message = formatted_message.replace('{user_tag}', f'{member.name}#{member.discriminator}')
+    
+    if '{server}' in formatted_message:
+        formatted_message = formatted_message.replace('{server}', member.guild.name)
+    
+    if '{server_members}' in formatted_message:
+            formatted_message = formatted_message.replace('{server_members}', len(member.guild.members))
+
+
+    await join_channel.send(formatted_message)
+
+@bot.event
+async def on_member_remove(member):
+    print('Member left')
+
+    guild_doc = guilds_collection.find_one(filter={"guild_id": member.guild.id})
+
+    if not 'leave_channel' in guild_doc:
+        return
+    
+    if not guild_doc['leave_channel']:
+        return
+    
+    if not 'leave_message' in guild_doc:
+        return
+    
+    if not guild_doc['leave_message']:
+        return
+    
+    join_channel = member.guild.get_channel(guild_doc['leave_channel'])
+    
+    formatted_message = guild_doc['leave_message']
+
+    if '{user}' in formatted_message:
+            formatted_message = formatted_message.replace('{user}', member.name)
+
+    if '{user_mention}' in formatted_message:
+        formatted_message = formatted_message.replace('{user_mention}', member.mention)
+    
+    if '{user_id}' in formatted_message:
+        formatted_message = formatted_message.replace('{user_id}', str(member.id))
+    
+    if '{user_tag}' in formatted_message:
+        formatted_message = formatted_message.replace('{user_tag}', f'{member.name}#{member.discriminator}')
+    
+    if '{server}' in formatted_message:
+        formatted_message = formatted_message.replace('{server}', member.guild.name)
+    
+    if '{server_members}' in formatted_message:
+            formatted_message = formatted_message.replace('{server_members}', len(member.guild.members))
+    
+    await join_channel.send(formatted_message)
 
 @bot.event
 async def on_guild_join(guild):
@@ -87,7 +171,13 @@ async def on_guild_join(guild):
         "guild_features": guild.features,
         "mod_role": None,
         "modlog_channel": None,
-        "venting_channel": None
+        "venting_channel": None,
+        "join_channel": None,
+        "leave_channel": None,
+        "join_message": None,
+        "join_message_set": False,
+        "leave_message": None,
+        "leave_message_set": False
     }
     guilds_collection.insert_one(post)
 

@@ -91,7 +91,7 @@ class Config(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     @commands.cooldown(1, 10, type=commands.BucketType.user)
-    async def set_join_channel(self, ctx, channel: commands.TextChannelConverter=None):
+    async def set_leave_channel(self, ctx, channel: commands.TextChannelConverter=None):
         if not channel:
             await ctx.send('Please provide a channel to be set as a leave channel.')
             return
@@ -142,7 +142,7 @@ class Config(commands.Cog):
             return
         
         if not guild_doc['leave_channel']:
-            await ctx.send('Please setup a join channel first using the command ``set_leave_channel``.')
+            await ctx.send('Please setup a leave channel first using the command ``set_leave_channel``.')
             return
         
         #Save to db
@@ -170,11 +170,11 @@ class Config(commands.Cog):
             return
         
         if not 'join_message' in guild_doc:
-            await ctx.send('Please setup a join channel first using the command ``set_join_channel``.')
+            await ctx.send('Please setup a join message first using the command ``set_join_message``.')
             return
         
         if not guild_doc['join_message']:
-            await ctx.send('Please setup a join channel first using the command ``set_join_channel``.')
+            await ctx.send('Please setup a join message first using the command ``set_join_message``.')
             return
         
         join_channel = ctx.guild.get_channel(guild_doc['join_channel'])
@@ -200,6 +200,7 @@ class Config(commands.Cog):
             formatted_message = formatted_message.replace('{server_members}', len(ctx.guild.members))
         
         await join_channel.send(formatted_message)
+        await ctx.send(f'You should be able to see a message in {join_channel.mention}, if not please check if i am allowed to post in that channel.')
     
     @commands.command(name='test_leave_message', help='Test the leave message you set using ``set_leave_message``.')
     @commands.guild_only()
@@ -218,11 +219,11 @@ class Config(commands.Cog):
             return
         
         if not 'leave_message' in guild_doc:
-            await ctx.send('Please setup a leave channel first using the command ``set_leave_channel``.')
+            await ctx.send('Please setup a leave message first using the command ``set_leave_message``.')
             return
         
         if not guild_doc['leave_message']:
-            await ctx.send('Please setup a leave channel first using the command ``set_leave_channel``.')
+            await ctx.send('Please setup a leave message first using the command ``set_leave_message``.')
             return
         
         
@@ -249,6 +250,37 @@ class Config(commands.Cog):
             formatted_message = formatted_message.replace('{server_members}', len(ctx.guild.members))
         
         await leave_channel.send(formatted_message)
+        await ctx.send(f'You should be able to see a message in {leave_channel.mention}, if not please check if i am allowed to post in that channel.')
+
+    @commands.command(name='disable_join_message', help='Use this command to disable join messages.')
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
+    async def disable_join_message(self, ctx):
+
+        guild_doc = guilds_collection.find_one(filter={"guild_id": ctx.guild.id})
+
+        guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {'$set': {"join_message": None}})
+        guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {'$set': {"join_message_set": False}})
+
+        guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {'$set': {"join_channel": None}})
+
+        await ctx.send('Join messages for this server have been disabled.')
+
+    @commands.command(name='disable_leave_message', help='Use this command to disable leave messages.')
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
+    async def disable_leave_message(self, ctx):
+
+        guild_doc = guilds_collection.find_one(filter={"guild_id": ctx.guild.id})
+
+        guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {'$set': {"leave_message": None}})
+        guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {'$set': {"leave_message_set": False}})
+
+        guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {'$set': {"leave_channel": None}})
+
+        await ctx.send('Leave messages for this server have been disabled.')
 
     @commands.command(name='placeholders', help='See the list of placeholders Available for each command.')
     @commands.guild_only()

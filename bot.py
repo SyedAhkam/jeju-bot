@@ -1,63 +1,81 @@
-import logging
+# Imports
 from discord.ext import commands
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
+import logging
 import discord
 import os
 import datetime
 
+# SetUp Logging
 logging.basicConfig(level=logging.INFO)
 
+# Load the env variables
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 MONGO_URI = os.getenv('MONGODB_URI')
 
+#Initialize MongoClient
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client.jeju
 
+# Get some collections
 guilds_collection = db.guilds
 bot_collection = db.bot
 
 
+# Get custom prefix
 def get_prefix(bot, message):
+
+    # If it is a guild then find a custom prefix
     if message.guild:
         guild = guilds_collection.find_one(filter={"guild_id": message.guild.id})
         return commands.when_mentioned_or(guild['guild_prefix'])(bot, message)
 
+    # Else default to +
     return commands.when_mentioned_or('+')(bot, message)
 
 
+# Initialize the bot
 bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
-bot.start_time = datetime.datetime.now()
+bot.start_time = datetime.datetime.now() # Store the start time to calculate uptime later
 
+# On_ready event
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to discord!')
 
+    # Change the presence
     activity = discord.Activity(type=discord.ActivityType.watching, name="+help | In Development")
     await bot.change_presence(status=discord.Status.online, activity=activity)
     print('Status changed')
 
 
+# on_message event
 @bot.event
 async def on_message(message):
+    # If the message is sent by the bot itself, return
     if message.author == bot.user:
         return
 
+    # Check if the user is blacklisted
     blacklisted_users = bot_collection.find_one()['blacklisted_users']
     if message.author.id in blacklisted_users:
 
+        # Get the prefix
         if message.guild:
             guild = guilds_collection.find_one(filter={"guild_id": message.guild.id})
             prefix = guild['guild_prefix']
         else:
             prefix = '+'
 
+        # Check if the blacklisted user is trying to interact with the bot
         if message.content.startswith(prefix):
             await message.channel.send('Sorry, you have been blacklisted from using this bot.\nAsk the bot owner to remove you from blacklist.')
             return
 
+    # If mentioned in in a message, then tell the user available prefixes
     if bot.user.mentioned_in(message):
         if message.guild:
             guild = guilds_collection.find_one(filter={"guild_id": message.guild.id})
@@ -68,14 +86,16 @@ async def on_message(message):
         prefixes = ', '.join(prefixes)
         await message.channel.send(f'My prefixes are ``{prefixes}``')
 
+    # IMPORTANT: Process the commands after everything is alright
     await bot.process_commands(message)
 
+# on_member_join event
 @bot.event
 async def on_member_join(member):
-    print('Member joined')
 
     guild_doc = guilds_collection.find_one(filter={"guild_id": member.guild.id})
 
+    # Check if a join message is set in the guild
     if not 'join_channel' in guild_doc:
         return
     
@@ -88,6 +108,7 @@ async def on_member_join(member):
     if not guild_doc['join_message']:
         return
     
+    # If yes then format it if needed
     join_channel = member.guild.get_channel(guild_doc['join_channel'])
     
     formatted_message = guild_doc['join_message']
@@ -110,15 +131,16 @@ async def on_member_join(member):
     if '{server_members}' in formatted_message:
             formatted_message = formatted_message.replace('{server_members}', len(member.guild.members))
 
-
+    # Then finally send it to the join_channel
     await join_channel.send(formatted_message)
 
+# on_member_remove event
 @bot.event
 async def on_member_remove(member):
-    print('Member left')
 
     guild_doc = guilds_collection.find_one(filter={"guild_id": member.guild.id})
 
+    # Check if a leave message is set in the guild
     if not 'leave_channel' in guild_doc:
         return
     
@@ -131,7 +153,8 @@ async def on_member_remove(member):
     if not guild_doc['leave_message']:
         return
     
-    join_channel = member.guild.get_channel(guild_doc['leave_channel'])
+    # If yes then format it if needed
+    leave_channel = member.guild.get_channel(guild_doc['leave_channel'])
     
     formatted_message = guild_doc['leave_message']
 
@@ -153,8 +176,10 @@ async def on_member_remove(member):
     if '{server_members}' in formatted_message:
             formatted_message = formatted_message.replace('{server_members}', len(member.guild.members))
     
-    await join_channel.send(formatted_message)
+    # Then finally send it to the leave_channel
+    await leave_channel.send(formatted_message)
 
+# on_guild_join event, Just to get the guild info in db
 @bot.event
 async def on_guild_join(guild):
 
@@ -182,14 +207,17 @@ async def on_guild_join(guild):
     guilds_collection.insert_one(post)
 
 
+# on_guild_remove event, Delete the document which contains info about the guild
 @bot.event
 async def on_guild_remove(guild):
     guilds_collection.delete_one(filter={"guild_id": guild.id})
 
 
+# On_command_error event, used as a error handler
 @bot.event
 async def on_command_error(ctx, error):
 
+    # Ignore some errors
     ignored = (commands.errors.CommandNotFound)
 
     error = getattr(error, "original", error)
@@ -197,6 +225,7 @@ async def on_command_error(ctx, error):
     if isinstance(error, ignored):
         return
 
+    # Catching other errors
     elif isinstance(error, commands.errors.DisabledCommand):
         return await ctx.send(f'This command has been disabled by the owner, Ask them to enable it.')
 
@@ -232,13 +261,16 @@ async def on_command_error(ctx, error):
         elif isinstance(error, commands.errors.ExtensionFailed):
             return await ctx.send(f'Extension with name ``{error.name}`` failed to load.')
     
+    # If the error is not handled, then raise error
     else:
         await ctx.send('An unexpected error occured.')
         raise error
 
+# Load the cogs in cogs directory
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         bot.load_extension(f'cogs.{filename[:-3]}')
         print(f'Loaded {filename}')
 
+# Finally run the bot
 bot.run(TOKEN)

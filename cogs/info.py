@@ -1,3 +1,4 @@
+# Imports
 from discord.ext import commands
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -8,26 +9,31 @@ import ago
 import os
 import sys, platform
 
+# Load env variables
 load_dotenv()
 MONGO_URI = os.getenv('MONGODB_URI')
 
+# Initialize the mongo_client
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client.jeju
 guilds_collection = db.guilds
 
 
+# Main Cog Class
 class Info(commands.Cog):
 
+    # Initialize the class
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    # Commands
+    @commands.command(name='ping', help='Get the bot\'s ping.')
     @commands.cooldown(1, 3, type=commands.BucketType.user)
     async def ping(self, ctx):
         ping = round(ctx.bot.latency * 1000)
         await ctx.send(f'Pong!\n{ping}ms')
 
-    @commands.command()
+    @commands.command(name='user', help='Get info about a specific user.')
     @commands.guild_only()
     @commands.cooldown(1, 5, type=commands.BucketType.user)
     async def user(self, ctx, user: commands.MemberConverter = None):
@@ -248,5 +254,6 @@ class Info(commands.Cog):
         await ctx.send(embed=embed)
 
 
+# Define setup function to make this cog loadable
 def setup(bot):
     bot.add_cog(Info(bot))

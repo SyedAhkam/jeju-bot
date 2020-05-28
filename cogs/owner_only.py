@@ -1,3 +1,4 @@
+# Imports
 from discord.ext import commands
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -5,22 +6,25 @@ from pymongo import MongoClient
 import discord
 import os
 
+# Load env variables
 load_dotenv()
 MONGO_URI = os.getenv('MONGODB_URI')
 
-
+# Initialize the mongo_client
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client.jeju
 
 guilds_collection = db.guilds
 bot_collection = db.bot
 
-
+# Main Cog Class
 class OwnerOnly(commands.Cog):
 
+    # Initialize the class
     def __init__(self, bot):
         self.bot = bot
 
+    # Commands
     @commands.command(name='load', help='Loads a specified category.')
     @commands.is_owner()
     async def load(self, ctx, extension):
@@ -158,5 +162,6 @@ class OwnerOnly(commands.Cog):
         print('Bot logged out through logout command.')
         await ctx.bot.logout()
 
+# Define setup function to make this cog loadable
 def setup(bot):
     bot.add_cog(OwnerOnly(bot))

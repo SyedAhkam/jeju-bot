@@ -1,3 +1,4 @@
+# Imports
 from discord.ext import commands
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -8,12 +9,15 @@ import datetime
 import os
 import aiohttp
 
+# Load env variables
 load_dotenv()
 MONGO_URI = os.getenv('MONGODB_URI')
 
+# Initialize the mongo_client
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client.jeju
 
+# Define fetch function
 async def fetch(session, url):
     async with session.get(url) as response:
         if not response.status == 200:
@@ -21,11 +25,14 @@ async def fetch(session, url):
         return await response.json()
 
 
+# Main Cog Class
 class Fun(commands.Cog):
 
+    # Initialize the class
     def __init__(self, bot):
         self.bot = bot
 
+    #Commands
     @commands.command(name='hello', help='Says back hello to the user.', aliases=['hi', 'hey'])
     @commands.cooldown(1, 3, type=commands.BucketType.user)
     async def hello(self, ctx):
@@ -100,5 +107,6 @@ class Fun(commands.Cog):
 
         await ctx.send(embed=embed)
 
+# Define setup function to make this cog loadable
 def setup(bot):
     bot.add_cog(Fun(bot))

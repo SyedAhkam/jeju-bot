@@ -1,3 +1,4 @@
+# Imports
 from discord.ext import commands
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -6,19 +7,24 @@ import os
 import datetime
 import discord
 
+# Load env variables
 load_dotenv()
 MONGO_URI = os.getenv('MONGODB_URI')
 
+# Initialize the mongo_client
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client.jeju
 guilds_collection = db.guilds
 
 
+# Main Cog Class
 class Config(commands.Cog):
 
+    # Initialize the class
     def __init__(self, bot):
         self.bot = bot
 
+    # Commands
     @commands.command(name='set_mod_role', help='Set a role to be used as a ModRole.')
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
@@ -301,5 +307,6 @@ class Config(commands.Cog):
 
         await ctx.send(embed=embed)
 
+# Define setup function to make this cog loadable
 def setup(bot):
     bot.add_cog(Config(bot))

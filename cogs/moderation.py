@@ -1,3 +1,4 @@
+# Imports
 from discord.ext import commands
 from pymongo import MongoClient
 from dotenv import load_dotenv
@@ -6,12 +7,17 @@ import discord
 import os
 import datetime
 
+# Load env variables
 load_dotenv()
+
+# Initialize the mongo_client
 MONGO_URI = os.getenv('MONGODB_URI')
 mongo_client = MongoClient(MONGO_URI)
+
 db = mongo_client.jeju
 guilds_collection = db.guilds
 
+# A custom check for checking if user has mod role or not
 def is_mod():
     def predicate(ctx):
         guild = guilds_collection.find_one(filter={"guild_id": ctx.guild.id})
@@ -26,11 +32,14 @@ def is_mod():
             return True
     return commands.check(predicate)
 
+# Main Cog Class
 class Moderation(commands.Cog):
 
+    # Initialize the class
     def __init__(self, bot):
         self.bot = bot
 
+    # Commands
     @commands.command(name='kick', help='Kicks a specified user.')
     @commands.guild_only()
     @commands.has_permissions(kick_members=True)
@@ -226,5 +235,6 @@ class Moderation(commands.Cog):
         await ctx.send(f'Purged {len(deleted)} messages successfully.', delete_after=3)
 
 
+# Define setup function to make this cog loadable
 def setup(bot):
     bot.add_cog(Moderation(bot))

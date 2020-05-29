@@ -1,3 +1,4 @@
+# Imports
 from discord.ext import commands
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -8,16 +9,20 @@ import os
 import datetime
 import aiohttp
 
+# Load env variables
 load_dotenv()
 MONGO_URI = os.getenv('MONGODB_URI')
 
+# Initialize the mongo_client
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client.jeju
 guilds_collection = db.guilds
 
+# Initialize the jikan module
 jikan = AioJikan()
 
 
+# define fetch function
 async def fetch(session, url):
     async with session.get(url) as response:
         if not response.status == 200:
@@ -25,11 +30,14 @@ async def fetch(session, url):
         return await response.json()
 
 
+# Main Cog Class
 class Utilities(commands.Cog):
 
+    # Initialize the class
     def __init__(self, bot):
         self.bot = bot
 
+    # Commands
     @commands.command(name='invite', help='Get the bot\'s invite link.')
     @commands.cooldown(1, 3, type=commands.BucketType.user)
     async def invite(self, ctx):
@@ -220,5 +228,106 @@ class Utilities(commands.Cog):
 
         await ctx.send(embed=embed)
 
+    @commands.command(name='time_in', help='Find the current time in different timezones.')
+    @commands.cooldown(1,5, type=commands.BucketType.user)
+    async def time_in(self, ctx, *, timezone=None):
+        if not timezone:
+            await ctx.send('Please provide a timezone.\nAvailable timezones: http://worldtimeapi.org/timezones')
+            return
+        
+        base_url = 'https://worldtimeapi.org/api/timezone/'
+        url_to_request = base_url + timezone
+
+        async with aiohttp.ClientSession() as session:
+            response = await fetch(session, url_to_request)
+        
+        if not response:
+            await ctx.send('Invalid Timezone or something\'s wrong with the API.\nAvailable timezones: http://worldtimeapi.org/timezones')
+            return
+        
+        if type(response) is list:
+            await ctx.send('Invalid Timezone or something\'s wrong with the API.\nAvailable timezones: http://worldtimeapi.org/timezones')
+            return
+
+        datetime_str = response['datetime']
+
+        abbreviation = response['abbreviation']
+        day_of_week = response['day_of_week']
+        day_of_year = response['day_of_year']
+        is_dst = response['dst']
+        dst_from = response['dst_from']
+        dst_offset = response['dst_offset']
+        dst_until = response['dst_until']
+        raw_offset = response['raw_offset']
+        utc_datetime = response['utc_datetime']
+        utc_offset = response['utc_offset']
+        week_number = response['week_number']
+
+
+        format_string = "%Y-%m-%dT%H:%M:%S.%f%z"
+
+        if datetime_str:
+            datetime_obj = datetime.datetime.strptime(datetime_str, format_string)
+            date = f'{datetime_obj.month}/{datetime_obj.day}/{datetime_obj.year}\n[Month/Day/Year]'
+            time = f'{datetime_obj.hour}:{datetime_obj.minute}:{datetime_obj.second}\n[Hour:Minute:Seconds]'
+        else:
+            date = None
+            time = None
+
+        if utc_datetime:
+            datetime_utc_obj = datetime.datetime.strptime(utc_datetime, format_string)
+            date_utc = f'{datetime_utc_obj.month}/{datetime_utc_obj.day}/{datetime_utc_obj.year}\n[Month/Day/Year]'
+            time_utc = f'{datetime_utc_obj.hour}:{datetime_utc_obj.minute}:{datetime_utc_obj.second}\n[Hour:Minute:Seconds]'
+        else:
+            date_utc = None
+            time_utc = None
+
+        if dst_from:
+            datetime_dst_from_obj = datetime.datetime.strptime(dst_from.split('+')[0], "%Y-%m-%dT%H:%M:%S")
+            date_dst_from = f'{datetime_dst_from_obj.month}/{datetime_dst_from_obj.day}/{datetime_dst_from_obj.year}\n[Month/Day/Year]'
+            time_dst_from = f'{datetime_dst_from_obj.hour}:{datetime_dst_from_obj.minute}:{datetime_dst_from_obj.second}\n[Hour:Minute:Seconds]'
+        else:
+            date_dst_from = None
+            time_dst_from = None
+
+        if dst_until:
+            datetime_dst_until_obj = datetime.datetime.strptime(dst_until.split('+')[0], "%Y-%m-%dT%H:%M:%S")
+            date_dst_until = f'{datetime_dst_until_obj.month}/{datetime_dst_until_obj.day}/{datetime_dst_until_obj.year}\n[Month/Day/Year]'
+            time_dst_until = f'{datetime_dst_until_obj.hour}:{datetime_dst_until_obj.minute}:{datetime_dst_until_obj.second}\n[Hour:Minute:Seconds]'
+        else:
+            date_dst_until = None
+            time_dst_until = None
+
+        embed = discord.Embed(title=f'Time in {timezone}', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
+
+        embed.set_footer(text='Powered by WorldTimeAPI')
+
+        embed.add_field(name='DST:', value=is_dst, inline=True)
+        embed.add_field(name='Date:', value=date, inline=True)
+        embed.add_field(name='Time:', value=time, inline=True)
+
+        embed.add_field(name='Day Of Week:', value=day_of_week, inline=True)
+        embed.add_field(name='Day Of Year: ', value=day_of_year, inline=True)
+        embed.add_field(name='Week Number:', value=week_number, inline=True)
+
+        if date_dst_from and time_dst_from:
+            embed.add_field(name='DST From:', value=date_dst_from + '\n' + time_dst_from, inline=True)
+        else:
+            embed.add_field(name='DST From:', value=None, inline=True)
+
+        embed.add_field(name='DST Offset:', value=dst_offset, inline=True)
+
+        if date_dst_until and time_dst_until:
+            embed.add_field(name='DST Until:', value=date_dst_until + '\n' + time_dst_until, inline=True)
+        else:
+            embed.add_field(name='DST Until:', value=None, inline=True)
+
+        embed.add_field(name='Raw Offset:', value=raw_offset, inline=True)
+        embed.add_field(name='UTC DateTime:', value=date_utc + '\n' + time_utc, inline=True)
+        embed.add_field(name='UTC Offset:', value=utc_offset, inline=True)
+
+        await ctx.send(embed=embed)
+
+# Define setup function to make this cog loadable
 def setup(bot):
     bot.add_cog(Utilities(bot))

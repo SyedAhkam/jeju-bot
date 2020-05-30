@@ -5,6 +5,7 @@ from pymongo import MongoClient
 
 import discord
 import os
+import ast
 
 # Load env variables
 load_dotenv()

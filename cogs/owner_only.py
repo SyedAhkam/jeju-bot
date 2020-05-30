@@ -104,7 +104,7 @@ class OwnerOnly(commands.Cog):
             'commands': commands,
             'ctx': ctx,
             'os': os,
-            'db': db
+            'db': db,
             '__import__': __import__
         }
         exec(compile(parsed, filename="<ast>", mode="exec"), env)

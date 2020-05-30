@@ -62,7 +62,7 @@ class OwnerOnly(commands.Cog):
 
     @commands.command()
     @commands.is_owner()
-    async def eval_fn(ctx, *, cmd):
+    async def eval(self, ctx, *, cmd):
         """Evaluates input.
         Input is interpreted as newline seperated statements.
         If the last statement is an expression, that is the return value.

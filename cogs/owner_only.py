@@ -103,6 +103,8 @@ class OwnerOnly(commands.Cog):
             'discord': discord,
             'commands': commands,
             'ctx': ctx,
+            'os': os,
+            'db': db
             '__import__': __import__
         }
         exec(compile(parsed, filename="<ast>", mode="exec"), env)

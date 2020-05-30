@@ -47,7 +47,7 @@ class OwnerOnly(commands.Cog):
     @commands.command(name='eval', help='Evaluate a piece of code.')
     @commands.is_owner()
     async def _eval(self, ctx, *, code):
-        await ctx.send(eval(code) + '\nDone')
+        await ctx.send(f'```{eval(code)}```')
 
     @commands.command(name='load_guilds', help='Load the guilds in the database.')
     @commands.is_owner()

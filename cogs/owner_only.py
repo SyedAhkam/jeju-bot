@@ -108,7 +108,7 @@ class OwnerOnly(commands.Cog):
         exec(compile(parsed, filename="<ast>", mode="exec"), env)
 
         result = (await eval(f"{fn_name}()", env))
-        await ctx.send(result)
+        await ctx.send(f'```py {result} ```')
 
     @commands.command(name='load_guilds', help='Load the guilds in the database.')
     @commands.is_owner()

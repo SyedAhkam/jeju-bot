@@ -23,3 +23,4 @@ nano .env[place your token in there and mongodb srv]
 pip3 install dependencies
 python3 bot.py
 ```
+*yeah i'm bad at documentation things, can anyone help?*

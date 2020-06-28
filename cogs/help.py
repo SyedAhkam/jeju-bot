@@ -16,7 +16,7 @@ def format(command):
 
     params = " ".join(params)
 
-    return f"`+ {cmd_and_aliases} {params}`"
+    return f"`+{cmd_and_aliases} {params}`"
 
 class HelpMenu(ListPageSource):
     def __init__(self, ctx, data):

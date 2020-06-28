@@ -16,7 +16,7 @@ def format(command):
 
     params = " ".join(params)
 
-    return f"`qwq {cmd_and_aliases} {params}`"
+    return f"`+ {cmd_and_aliases} {params}`"
 
 class HelpMenu(ListPageSource):
     def __init__(self, ctx, data):
@@ -64,7 +64,7 @@ class Help(commands.Cog):
     @commands.command(name='help', help='Shows this message')
     async def help(self, ctx, *, command_or_cog=None):
 
-        help_embed = discord.Embed(timestamp=datetime.datetime.utcnow(), color=0xfacaf5)
+        help_embed = discord.Embed(timestamp=datetime.datetime.utcnow(), color=0xFFFFFF)
         help_embed.set_author(name='Help', url=discord.Embed.Empty, icon_url=ctx.bot.user.avatar_url)
         help_embed.set_footer(text=f'Requested by {ctx.author.name}', icon_url=discord.Embed.Empty)
         help_embed.set_thumbnail(url=ctx.guild.icon_url)

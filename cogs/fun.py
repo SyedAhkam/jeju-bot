@@ -2,6 +2,8 @@
 from discord.ext import commands
 from dotenv import load_dotenv
 from pymongo import MongoClient
+from bs4 import BeautifulSoup
+from urlextract import URLExtract
 
 import discord
 import random
@@ -16,6 +18,9 @@ MONGO_URI = os.getenv('MONGODB_URI')
 # Initialize the mongo_client
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client.jeju
+
+# Initialize the urlextract thing
+extractor = URLExtract()
 
 # Define fetch function
 async def fetch(session, url):
@@ -87,7 +92,7 @@ class Fun(commands.Cog):
 
         async with aiohttp.ClientSession() as session:
             response = await fetch(session, 'https://meme-api.herokuapp.com/gimme')
-        
+
         if not response:
             await ctx.send('Something went wrong with the API, Please try again later.')
             return
@@ -106,6 +111,46 @@ class Fun(commands.Cog):
         embed.add_field(name='SubReddit', value=subreddit)
 
         await ctx.send(embed=embed)
+
+    @commands.command(name='vibe_check', help='Get your vibe checked')
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
+    async def vibe_check(self, ctx, *, name=None):
+        url = 'https://en.shindanmaker.com/937709'
+
+        if not name:
+            data = {'u': ctx.author.name}
+        else:
+            data = {'u': name}
+
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, data=data) as response:
+                if not response.status == 200:
+                    return False
+                response = await response.text()
+
+
+        if not response:
+            await ctx.send('Something got wrong while getting the response, Try again later.')
+            return
+
+        doc = BeautifulSoup(response, 'html.parser')
+
+        text = doc.textarea.contents[0]
+
+        passed = 'Undefined'
+
+        if 'Vibe check passed' in text:
+            passed = True
+        if 'Vibe check failed' in text:
+            passed = False
+
+        result_url = extractor.find_urls(text)[0]
+
+        if passed:
+            await ctx.send(f'Congratulations you passed the vibe check!\nURL: {result_url}')
+            return
+        await ctx.send(f'Sorry you failed the vibe check :(\nURL: {result_url}')
+
 
 # Define setup function to make this cog loadable
 def setup(bot):

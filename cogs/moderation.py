@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import discord
 import os
 import datetime
+import asyncio
 
 # Load env variables
 load_dotenv()
@@ -233,6 +234,70 @@ class Moderation(commands.Cog):
         await ctx.message.delete()
         deleted = await ctx.channel.purge(limit=messages)
         await ctx.send(f'Purged {len(deleted)} messages successfully.', delete_after=3)
+
+    @commands.command(name='purge_unverified', help='Kick users who doesn\'t have the verified role.')
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @commands.cooldown(1, 10, type=commands.BucketType.user)
+    async def purge_unverified(self, ctx):
+        q = await ctx.send('Would you like to DM them too?')
+        answers = ['y', 'Y', 'yes', 'Yes']
+
+        def check(msg):
+            return msg.author == ctx.message.author and msg.channel == ctx.message.channel
+        try:
+            msg = await ctx.bot.wait_for('message', check=check, timeout=30.0)
+
+            dm = True if msg.content in answers else False
+
+            if dm:
+                q2 = await ctx.send('What do you want me to DM them?')
+                msg2 = await ctx.bot.wait_for('message', check=check, timeout=30.0)
+                dm_message = msg2.content
+
+            guild = guilds_collection.find_one(filter={"guild_id": ctx.guild.id})
+
+            try:
+                verified_role_id = guild['verified_role']
+            except KeyError:
+                await ctx.send('Please setup a verified role first using the command `set_verified_role`.')
+                return
+
+            if not verified_role_id:
+                await ctx.send('Please setup a verified role first using the command `set_verified_role`.')
+                return
+
+            verified_role = ctx.guild.get_role(verified_role_id)
+
+            progress = await ctx.send('Lemme calculate now...')
+            bots = [x for x in ctx.guild.members if x.bot]
+            total_members = ctx.guild.members
+            unverified = [x for x in total_members if not verified_role in x.roles]
+
+            if len(unverified) - len(bots) <= 0:
+                await ctx.send('No unverified people detected.')
+                return
+
+            await progress.edit(content=f'So... from a total number of `{len(total_members)} members`, About `{len(unverified) - len(bots)}` members are unverfied excluding `{len(bots)}` bots..')
+
+
+            q3 = await ctx.send('Do you still wanna continue? (Make sure i have `kick_members` permission)')
+            msg3 = await ctx.bot.wait_for('message', check=check, timeout=30.0)
+            if not msg3.content in answers: return
+
+            progress2 = await ctx.send('Working on it, Please be patient.')
+
+            for member in unverified:
+                if member.bot: continue
+                if dm:
+                    await member.send(dm_message)
+                await member.kick(reason='Automatic action by jeju\'s `purge_unverified` command.')
+            else:
+                await progress2.edit(content='All done!')
+                print(f'Purged unverified command has been used in: {ctx.guild.name} : {ctx.guild.id}')
+
+        except asyncio.TimeoutError:
+            await ctx.send('Timed out, Please try again later.')
 
 
 # Define setup function to make this cog loadable

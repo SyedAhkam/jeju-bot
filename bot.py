@@ -98,19 +98,19 @@ async def on_member_join(member):
     # Check if a join message is set in the guild
     if not 'join_channel' in guild_doc:
         return
-    
+
     if not guild_doc['join_channel']:
         return
-    
+
     if not 'join_message' in guild_doc:
         return
-    
+
     if not guild_doc['join_message']:
         return
-    
+
     # If yes then format it if needed
     join_channel = member.guild.get_channel(guild_doc['join_channel'])
-    
+
     formatted_message = guild_doc['join_message']
 
     if '{user}' in formatted_message:
@@ -118,16 +118,16 @@ async def on_member_join(member):
 
     if '{user_mention}' in formatted_message:
         formatted_message = formatted_message.replace('{user_mention}', member.mention)
-    
+
     if '{user_id}' in formatted_message:
         formatted_message = formatted_message.replace('{user_id}', str(member.id))
-    
+
     if '{user_tag}' in formatted_message:
         formatted_message = formatted_message.replace('{user_tag}', f'{member.name}#{member.discriminator}')
-    
+
     if '{server}' in formatted_message:
         formatted_message = formatted_message.replace('{server}', member.guild.name)
-    
+
     if '{server_members}' in formatted_message:
             formatted_message = formatted_message.replace('{server_members}', len(member.guild.members))
 
@@ -143,19 +143,19 @@ async def on_member_remove(member):
     # Check if a leave message is set in the guild
     if not 'leave_channel' in guild_doc:
         return
-    
+
     if not guild_doc['leave_channel']:
         return
-    
+
     if not 'leave_message' in guild_doc:
         return
-    
+
     if not guild_doc['leave_message']:
         return
-    
+
     # If yes then format it if needed
     leave_channel = member.guild.get_channel(guild_doc['leave_channel'])
-    
+
     formatted_message = guild_doc['leave_message']
 
     if '{user}' in formatted_message:
@@ -163,19 +163,19 @@ async def on_member_remove(member):
 
     if '{user_mention}' in formatted_message:
         formatted_message = formatted_message.replace('{user_mention}', member.mention)
-    
+
     if '{user_id}' in formatted_message:
         formatted_message = formatted_message.replace('{user_id}', str(member.id))
-    
+
     if '{user_tag}' in formatted_message:
         formatted_message = formatted_message.replace('{user_tag}', f'{member.name}#{member.discriminator}')
-    
+
     if '{server}' in formatted_message:
         formatted_message = formatted_message.replace('{server}', member.guild.name)
-    
+
     if '{server_members}' in formatted_message:
             formatted_message = formatted_message.replace('{server_members}', len(member.guild.members))
-    
+
     # Then finally send it to the leave_channel
     await leave_channel.send(formatted_message)
 
@@ -202,7 +202,8 @@ async def on_guild_join(guild):
         "join_message": None,
         "join_message_set": False,
         "leave_message": None,
-        "leave_message_set": False
+        "leave_message_set": False,
+        "venting_channel":False,
     }
     guilds_collection.insert_one(post)
 
@@ -234,7 +235,7 @@ async def on_command_error(ctx, error):
                 return await ctx.author.send(f'{ctx.command} command can not be used in Private Messages.')
             except:
                 pass
-    
+
     elif isinstance(error, commands.errors.CheckFailure):
         if isinstance(error, commands.errors.NotOwner):
             return await ctx.send('This command is only accessible by the owner of the bot.')
@@ -244,10 +245,10 @@ async def on_command_error(ctx, error):
             return await ctx.send(f'Bot need these permissions to run that command, ``{error.missing_perms}``')
         elif isinstance(error, commands.errors.MissingRole):
             return await ctx.send(f'You need this role to access this command: ``{error.missing_role}``')
-    
+
     elif isinstance(error, commands.errors.BadArgument):
         return await ctx.send('Invalid arguments given, please check the help command.')
-    
+
     elif isinstance(error, commands.errors.CommandOnCooldown):
         return await ctx.send(f'This command is on cooldown.\n Please wait ``{round(error.retry_after)}`` more seconds.')
 
@@ -260,7 +261,7 @@ async def on_command_error(ctx, error):
             return await ctx.send(f'Extension with name ``{error.name}`` not loaded.')
         elif isinstance(error, commands.errors.ExtensionFailed):
             return await ctx.send(f'Extension with name ``{error.name}`` failed to load.')
-    
+
     # If the error is not handled, then raise error
     else:
         await ctx.send('An unexpected error occured.')

@@ -38,7 +38,7 @@ class Config(commands.Cog):
             await ctx.send('I highly discourage making everyone a Mod.')
             return
 
-        guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {'$set': {"mod_role": role.id}})    
+        guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {'$set': {"mod_role": role.id}})
 
         await ctx.send(f'Role ``{role.name}`` with ID: ``{role.id}`` has been set as a ModRole successfully.')
 
@@ -50,7 +50,7 @@ class Config(commands.Cog):
         if not channel:
             await ctx.send('Please provide a channel to set as a ModLogs Channel.')
             return
-        
+
         guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {'$set': {"modlog_channel": channel.id}})
 
         await ctx.send(f'Channel ``{channel.name}`` with ID: ``{channel.id}`` has been set up as a ModLogs channel successfully.')
@@ -119,11 +119,11 @@ class Config(commands.Cog):
         if not 'join_channel' in guild_doc:
             await ctx.send('Please setup a join channel first using the command ``set_join_channel``.')
             return
-        
+
         if not guild_doc['join_channel']:
             await ctx.send('Please setup a join channel first using the command ``set_join_channel``.')
             return
-        
+
         #Save to db
         guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {'$set': {"join_message": join_message}})
         guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {'$set': {"join_message_set": True}})
@@ -146,11 +146,11 @@ class Config(commands.Cog):
         if not 'leave_channel' in guild_doc:
             await ctx.send('Please setup a leave channel first using the command ``set_leave_channel``.')
             return
-        
+
         if not guild_doc['leave_channel']:
             await ctx.send('Please setup a leave channel first using the command ``set_leave_channel``.')
             return
-        
+
         #Save to db
         guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {'$set': {"leave_message": leave_message}})
         guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {'$set': {"leave_message_set": True}})
@@ -158,7 +158,7 @@ class Config(commands.Cog):
         embed = discord.Embed(title='Leave Message set to:', description=leave_message, color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
 
         await ctx.send(embed=embed)
-    
+
     @commands.command(name='test_join_message', help='Test the join message you set using ``set_join_message``.')
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
@@ -170,19 +170,19 @@ class Config(commands.Cog):
         if not 'join_channel' in guild_doc:
             await ctx.send('Please setup a join channel first using the command ``set_join_channel``.')
             return
-        
+
         if not guild_doc['join_channel']:
             await ctx.send('Please setup a join channel first using the command ``set_join_channel``.')
             return
-        
+
         if not 'join_message' in guild_doc:
             await ctx.send('Please setup a join message first using the command ``set_join_message``.')
             return
-        
+
         if not guild_doc['join_message']:
             await ctx.send('Please setup a join message first using the command ``set_join_message``.')
             return
-        
+
         join_channel = ctx.guild.get_channel(guild_doc['join_channel'])
 
         formatted_message = guild_doc['join_message']
@@ -192,22 +192,22 @@ class Config(commands.Cog):
 
         if '{user_mention}' in formatted_message:
             formatted_message = formatted_message.replace('{user_mention}', ctx.author.mention)
-        
+
         if '{user_id}' in formatted_message:
             formatted_message = formatted_message.replace('{user_id}', str(ctx.author.id))
-        
+
         if '{user_tag}' in formatted_message:
             formatted_message = formatted_message.replace('{user_tag}', f'{ctx.author.name}#{ctx.author.discriminator}')
-        
+
         if '{server}' in formatted_message:
             formatted_message = formatted_message.replace('{server}', ctx.guild.name)
-        
+
         if '{server_members}' in formatted_message:
             formatted_message = formatted_message.replace('{server_members}', len(ctx.guild.members))
-        
+
         await join_channel.send(formatted_message)
         await ctx.send(f'You should be able to see a message in {join_channel.mention}, if not please check if i am allowed to post in that channel.')
-    
+
     @commands.command(name='test_leave_message', help='Test the leave message you set using ``set_leave_message``.')
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
@@ -219,20 +219,20 @@ class Config(commands.Cog):
         if not 'leave_channel' in guild_doc:
             await ctx.send('Please setup a leave channel first using the command ``set_leave_channel``.')
             return
-        
+
         if not guild_doc['leave_channel']:
             await ctx.send('Please setup a leave channel first using the command ``set_leave_channel``.')
             return
-        
+
         if not 'leave_message' in guild_doc:
             await ctx.send('Please setup a leave message first using the command ``set_leave_message``.')
             return
-        
+
         if not guild_doc['leave_message']:
             await ctx.send('Please setup a leave message first using the command ``set_leave_message``.')
             return
-        
-        
+
+
         leave_channel = ctx.guild.get_channel(guild_doc['leave_channel'])
 
         formatted_message = guild_doc['leave_message']
@@ -242,19 +242,19 @@ class Config(commands.Cog):
 
         if '{user_mention}' in formatted_message:
             formatted_message = formatted_message.replace('{user_mention}', ctx.author.mention)
-        
+
         if '{user_id}' in formatted_message:
             formatted_message = formatted_message.replace('{user_id}', str(ctx.author.id))
-        
+
         if '{user_tag}' in formatted_message:
             formatted_message = formatted_message.replace('{user_tag}', f'{ctx.author.name}#{ctx.author.discriminator}')
-        
+
         if '{server}' in formatted_message:
             formatted_message = formatted_message.replace('{server}', ctx.guild.name)
-        
+
         if '{server_members}' in formatted_message:
             formatted_message = formatted_message.replace('{server_members}', len(ctx.guild.members))
-        
+
         await leave_channel.send(formatted_message)
         await ctx.send(f'You should be able to see a message in {leave_channel.mention}, if not please check if i am allowed to post in that channel.')
 
@@ -288,6 +288,19 @@ class Config(commands.Cog):
 
         await ctx.send('Leave messages for this server have been disabled.')
 
+    @commands.command(name='set_verified_role', help='Setup the verified role, Needed for `purge_unverified` command.')
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
+    async def set_verified_role(self, ctx, role: commands.RoleConverter=None):
+            if not role:
+                    await ctx.send('Please provide a role to be set as a verified role.')
+                    return
+
+            guilds_collection.find_one_and_update({"guild_id": ctx.guild.id}, {'$set': {"verified_role": role.id}})
+            await ctx.send(f'Role ``{role.name}`` with ID: ``{role.id}`` has been set as a verified role successfully.')
+
+
     @commands.command(name='placeholders', help='See the list of placeholders Available for each command.')
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
@@ -302,7 +315,7 @@ class Config(commands.Cog):
         ``{server}`` gives the server's name.
         ``{server_members}`` gives the server's total members.
         '''
-        
+
         embed = discord.Embed(title='Placeholders', description=description, color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
 
         await ctx.send(embed=embed)

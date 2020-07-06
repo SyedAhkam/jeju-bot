@@ -290,11 +290,15 @@ class Moderation(commands.Cog):
             for member in unverified:
                 if member.bot: continue
                 if dm:
-                    await member.send(dm_message)
+                    try:
+                        await member.send(dm_message)
+                    except discord.errors.Forbidden:
+                        await progress2.edit(content=f'Can\'t DM this user: {member}, Skipping...')
+
                 await member.kick(reason='Automatic action by jeju\'s `purge_unverified` command.')
             else:
                 await progress2.edit(content='All done!')
-                print(f'Purged unverified command has been used in: {ctx.guild.name} : {ctx.guild.id}')
+                print(f'Purge unverified command has been used in: {ctx.guild.name} : {ctx.guild.id}')
 
         except asyncio.TimeoutError:
             await ctx.send('Timed out, Please try again later.')

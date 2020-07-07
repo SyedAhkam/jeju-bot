@@ -7,7 +7,8 @@ import discord
 import datetime
 import ago
 import os
-import sys, platform
+import sys
+import platform
 
 # Load env variables
 load_dotenv()
@@ -55,38 +56,50 @@ class Info(commands.Cog):
             for role in roles:
                 roles_string += role.name + ', '
 
-            embed_author = discord.Embed(title='Your info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
+            embed_author = discord.Embed(
+                title='Your info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
 
-            embed_author.set_author(name=user_name, url=discord.Embed.Empty, icon_url=avatar_url)
+            embed_author.set_author(
+                name=user_name, url=discord.Embed.Empty, icon_url=avatar_url)
 
             embed_author.set_footer(text=f'Requested by {ctx.author.name}')
 
             embed_author.set_thumbnail(url=avatar_url)
 
-            embed_author.add_field(name='UserName:', value=user_name, inline=True)
+            embed_author.add_field(
+                name='UserName:', value=user_name, inline=True)
             embed_author.add_field(name='UserID:', value=user_id, inline=True)
-            embed_author.add_field(name='UserTag:', value=user_name + '#' + user_discriminator, inline=True)
+            embed_author.add_field(
+                name='UserTag:', value=user_name + '#' + user_discriminator, inline=True)
 
             if not user_name == display_name:
-                embed_author.add_field(name='Nickname:', value=display_name, inline=False)
+                embed_author.add_field(
+                    name='Nickname:', value=display_name, inline=False)
             else:
-                embed_author.add_field(name='Nickname:', value='None', inline=False)
+                embed_author.add_field(
+                    name='Nickname:', value='None', inline=False)
 
-            embed_author.add_field(name='Created:', value=created_at, inline=True)
-            embed_author.add_field(name='Joined:', value=joined_at, inline=True)
+            embed_author.add_field(
+                name='Created:', value=created_at, inline=True)
+            embed_author.add_field(
+                name='Joined:', value=joined_at, inline=True)
             embed_author.add_field(name='Status:', value=status, inline=False)
 
             if not activity:
-                embed_author.add_field(name='Activity:', value='No activity', inline=True)
+                embed_author.add_field(
+                    name='Activity:', value='No activity', inline=True)
             else:
-                embed_author.add_field(name='Activity:', value=activity.name, inline=True)
+                embed_author.add_field(
+                    name='Activity:', value=activity.name, inline=True)
 
-            embed_author.add_field(name='Roles:', value=f'```{roles_string}```', inline=False)
+            embed_author.add_field(
+                name='Roles:', value=f'```{roles_string}```', inline=False)
 
             await ctx.send(embed=embed_author)
             return
 
-        embed_user = discord.Embed(title=f'{user.name}\'s info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
+        embed_user = discord.Embed(
+            title=f'{user.name}\'s info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
 
         embed_user.set_footer(text=f'Requested by {ctx.author.name}')
 
@@ -107,16 +120,19 @@ class Info(commands.Cog):
         for role in roles:
             roles_string += role.name + ', '
 
-        embed_user.set_author(name=user_name, url=discord.Embed.Empty, icon_url=avatar_url)
+        embed_user.set_author(
+            name=user_name, url=discord.Embed.Empty, icon_url=avatar_url)
 
         embed_user.set_thumbnail(url=avatar_url)
 
         embed_user.add_field(name='UserName:', value=user_name, inline=True)
         embed_user.add_field(name='UserID:', value=user_id, inline=True)
-        embed_user.add_field(name='UserTag:', value=user_name + '#' + user_discriminator, inline=True)
+        embed_user.add_field(name='UserTag:', value=user_name +
+                             '#' + user_discriminator, inline=True)
 
         if not user_name == display_name:
-            embed_user.add_field(name='Nickname:', value=display_name, inline=False)
+            embed_user.add_field(
+                name='Nickname:', value=display_name, inline=False)
         else:
             embed_user.add_field(name='Nickname:', value='None', inline=False)
 
@@ -127,11 +143,14 @@ class Info(commands.Cog):
         embed_user.add_field(name='Status:', value=status, inline=True)
 
         if not activity:
-            embed_user.add_field(name='Activity:', value='No activity', inline=True)
+            embed_user.add_field(
+                name='Activity:', value='No activity', inline=True)
         else:
-            embed_user.add_field(name='Activity:', value=activity.name, inline=True)
+            embed_user.add_field(
+                name='Activity:', value=activity.name, inline=True)
 
-        embed_user.add_field(name='Roles:', value=f'```{roles_string}```', inline=False)
+        embed_user.add_field(
+            name='Roles:', value=f'```{roles_string}```', inline=False)
 
         await ctx.send(embed=embed_user)
 
@@ -175,7 +194,8 @@ class Info(commands.Cog):
         if not emojis_string:
             emojis_string = 'No emojis in this server.'
 
-        embed = discord.Embed(title='Server info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
+        embed = discord.Embed(
+            title='Server info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
 
         embed.set_footer(text=f'Requested by {ctx.author.name}')
 
@@ -189,23 +209,32 @@ class Info(commands.Cog):
         embed.add_field(name='Owner:', value=guild_owner.mention, inline=True)
         embed.add_field(name='Members:', value=guild_members, inline=True)
 
-        embed.add_field(name='Verification level:', value=guild_verification, inline=True)
-        embed.add_field(name='AFK Channel:', value=guild_afk_channel, inline=True)
-        embed.add_field(name='Default Notifications:', value=guild_default_notifications, inline=True)
+        embed.add_field(name='Verification level:',
+                        value=guild_verification, inline=True)
+        embed.add_field(name='AFK Channel:',
+                        value=guild_afk_channel, inline=True)
+        embed.add_field(name='Default Notifications:',
+                        value=guild_default_notifications, inline=True)
 
-        embed.add_field(name='Boost Tier:', value=guild_boost_tier, inline=True)
+        embed.add_field(name='Boost Tier:',
+                        value=guild_boost_tier, inline=True)
         embed.add_field(name='Boosters:', value=guild_boosters, inline=True)
         embed.add_field(name='Features:', value=guild_features, inline=True)
 
-        embed.add_field(name='Text Channels:', value=guild_text_channels, inline=True)
-        embed.add_field(name='Voice Channels:', value=guild_voice_channels, inline=True)
-        embed.add_field(name='Total Channels:', value=guild_channels, inline=True)
+        embed.add_field(name='Text Channels:',
+                        value=guild_text_channels, inline=True)
+        embed.add_field(name='Voice Channels:',
+                        value=guild_voice_channels, inline=True)
+        embed.add_field(name='Total Channels:',
+                        value=guild_channels, inline=True)
 
-        embed.add_field(name='Categories:', value=guild_categories, inline=True)
+        embed.add_field(name='Categories:',
+                        value=guild_categories, inline=True)
         embed.add_field(name='Roles:', value=guild_roles, inline=True)
         embed.add_field(name='Created:', value=guild_created_at, inline=True)
 
-        embed.add_field(name='Emoji limit:', value=guild_emoji_limit, inline=True)
+        embed.add_field(name='Emoji limit:',
+                        value=guild_emoji_limit, inline=True)
 
         embed.add_field(name='Emojis:', value=emojis_string, inline=True)
 
@@ -216,7 +245,8 @@ class Info(commands.Cog):
     async def bot(self, ctx):
 
         if ctx.guild:
-            guild = guilds_collection.find_one(filter={"guild_id": ctx.guild.id})
+            guild = guilds_collection.find_one(
+                filter={"guild_id": ctx.guild.id})
             prefixes = [str(guild['guild_prefix']), '@mention']
         else:
             prefixes = ['+', '@mention']
@@ -229,7 +259,8 @@ class Info(commands.Cog):
         operating_system = platform.system()
         processor = platform.processor()
 
-        embed = discord.Embed(title='Bot info', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
+        embed = discord.Embed(title='Bot info', color=0xFFFFFF,
+                              timestamp=datetime.datetime.utcnow())
 
         embed.set_footer(text=f'Requested by {ctx.author.name}')
 
@@ -237,18 +268,22 @@ class Info(commands.Cog):
 
         embed.add_field(name='Name:', value=ctx.bot.user.name, inline=True)
         embed.add_field(name='Developer:', value='SyedAhkam#8605', inline=True)
-        embed.add_field(name='Library:', value=f'discord.py {discord.__version__}', inline=True)
+        embed.add_field(name='Library:',
+                        value=f'discord.py {discord.__version__}', inline=True)
 
         embed.add_field(name='Guilds:', value=len(ctx.bot.guilds), inline=True)
         embed.add_field(name='Users:', value=len(ctx.bot.users), inline=True)
         embed.add_field(name='Prefixes:', value=prefixes, inline=True)
 
-        embed.add_field(name='Uptime:', value=ago.human(ctx.bot.start_time, past_tense='{}'), inline=True)
+        embed.add_field(name='Uptime:', value=ago.human(
+            ctx.bot.start_time, past_tense='{}'), inline=True)
         embed.add_field(name='Ping:', value=f'{ping}ms', inline=True)
-        embed.add_field(name='Source:', value='[link](https://github.com/SyedAhkam/jeju-bot/)')
+        embed.add_field(
+            name='Source:', value='[link](https://github.com/SyedAhkam/jeju-bot/)')
 
         embed.add_field(name='Python:', value=python_version, inline=True)
-        embed.add_field(name='OperatingSystem:', value=operating_system, inline=True)
+        embed.add_field(name='OperatingSystem:',
+                        value=operating_system, inline=True)
         embed.add_field(name='Processer', value=processor, inline=True)
 
         await ctx.send(embed=embed)

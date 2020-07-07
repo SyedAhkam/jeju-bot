@@ -23,6 +23,8 @@ db = mongo_client.jeju
 extractor = URLExtract()
 
 # Define fetch function
+
+
 async def fetch(session, url):
     async with session.get(url) as response:
         if not response.status == 200:
@@ -37,7 +39,7 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    #Commands
+    # Commands
     @commands.command(name='hello', help='Says back hello to the user.', aliases=['hi', 'hey'])
     @commands.cooldown(1, 3, type=commands.BucketType.user)
     async def hello(self, ctx):
@@ -45,7 +47,7 @@ class Fun(commands.Cog):
 
     @commands.command(name='roll', help='Simulates a dice roll.')
     @commands.cooldown(1, 5, type=commands.BucketType.user)
-    async def roll(self, ctx, number_of_dice: int=None, number_of_sides: int=6):
+    async def roll(self, ctx, number_of_dice: int = None, number_of_sides: int = 6):
 
         if not number_of_dice:
             await ctx.send('Please provide number of dices.')
@@ -78,11 +80,13 @@ class Fun(commands.Cog):
 
         choosen_response = random.choice(response)
 
-        embed = discord.Embed(title=f'You asked \'{question}\'', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
+        embed = discord.Embed(
+            title=f'You asked \'{question}\'', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
 
         embed.set_footer(text=f'Asked by {ctx.author.name}')
 
-        embed.add_field(name='Magic 8ball thinks:', value=choosen_response, inline=True)
+        embed.add_field(name='Magic 8ball thinks:',
+                        value=choosen_response, inline=True)
 
         await ctx.send(embed=embed)
 
@@ -102,7 +106,8 @@ class Fun(commands.Cog):
         title = response['title']
         image_url = response['url']
 
-        embed = discord.Embed(title='A random meme for you', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
+        embed = discord.Embed(title='A random meme for you',
+                              color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
         embed.set_footer(text='Powered by MemeAPI')
         embed.set_image(url=image_url)
 
@@ -127,7 +132,6 @@ class Fun(commands.Cog):
                 if not response.status == 200:
                     return False
                 response = await response.text()
-
 
         if not response:
             await ctx.send('Something got wrong while getting the response, Try again later.')

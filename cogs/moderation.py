@@ -19,21 +19,27 @@ db = mongo_client.jeju
 guilds_collection = db.guilds
 
 # A custom check for checking if user has mod role or not
+
+
 def is_mod():
     def predicate(ctx):
         guild = guilds_collection.find_one(filter={"guild_id": ctx.guild.id})
         mod_role = guild['mod_role']
 
         if not mod_role:
-            ctx.channel.send('Please setup a mod_role using the command ``set_mod_role``')
+            ctx.channel.send(
+                'Please setup a mod_role using the command ``set_mod_role``')
             return
 
-        check = discord.utils.find(lambda r: r.id == mod_role, ctx.author.roles)
+        check = discord.utils.find(
+            lambda r: r.id == mod_role, ctx.author.roles)
         if check:
             return True
     return commands.check(predicate)
 
 # Main Cog Class
+
+
 class Moderation(commands.Cog):
 
     # Initialize the class
@@ -45,7 +51,7 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(kick_members=True)
     @commands.cooldown(1, 5, type=commands.BucketType.user)
-    async def kick(self, ctx, user: commands.MemberConverter=None, *, reason=None):
+    async def kick(self, ctx, user: commands.MemberConverter = None, *, reason=None):
 
         if not user:
             await ctx.send('Please provide a user.')
@@ -69,13 +75,17 @@ class Moderation(commands.Cog):
             await ctx.send(f'User {user.name} has been kicked successfully.')
             return
 
-        kick_embed = discord.Embed(title='Kicked', description='A user have been kicked.', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
+        kick_embed = discord.Embed(title='Kicked', description='A user have been kicked.',
+                                   color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
 
-        kick_embed.set_author(name=user.name, url=discord.Embed.Empty, icon_url=user.avatar_url)
+        kick_embed.set_author(
+            name=user.name, url=discord.Embed.Empty, icon_url=user.avatar_url)
 
-        kick_embed.add_field(name='Offender:', value=user.name + user.mention, inline=True)
+        kick_embed.add_field(
+            name='Offender:', value=user.name + user.mention, inline=True)
         kick_embed.add_field(name='Reason:', value=reason, inline=True)
-        kick_embed.add_field(name='Responsible moderator:', value=ctx.author.name, inline=True)
+        kick_embed.add_field(name='Responsible moderator:',
+                             value=ctx.author.name, inline=True)
 
         kick_embed.set_footer(text=f'UserID: {user.id}')
 
@@ -90,7 +100,7 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     @commands.cooldown(1, 5, type=commands.BucketType.user)
-    async def ban(self, ctx, user: commands.MemberConverter=None, *, reason=None):
+    async def ban(self, ctx, user: commands.MemberConverter = None, *, reason=None):
 
         if not user:
             await ctx.send('Please provide a user.')
@@ -114,13 +124,17 @@ class Moderation(commands.Cog):
             await ctx.send(f'User {user.name} has been banned successfully.')
             return
 
-        ban_embed = discord.Embed(title='Banned', description='A user have been Banned.', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
+        ban_embed = discord.Embed(title='Banned', description='A user have been Banned.',
+                                  color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
 
-        ban_embed.set_author(name=user.name, url=discord.Embed.Empty, icon_url=user.avatar_url)
+        ban_embed.set_author(
+            name=user.name, url=discord.Embed.Empty, icon_url=user.avatar_url)
 
-        ban_embed.add_field(name='Offender:', value=user.name + user.mention, inline=True)
+        ban_embed.add_field(
+            name='Offender:', value=user.name + user.mention, inline=True)
         ban_embed.add_field(name='Reason:', value=reason, inline=True)
-        ban_embed.add_field(name='Responsible moderator:', value=ctx.author.name, inline=True)
+        ban_embed.add_field(name='Responsible moderator:',
+                            value=ctx.author.name, inline=True)
 
         ban_embed.set_footer(text=f'UserID: {user.id}')
 
@@ -135,7 +149,7 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     @commands.cooldown(1, 5, type=commands.BucketType.user)
-    async def unban(self, ctx, user: commands.UserConverter=None):
+    async def unban(self, ctx, user: commands.UserConverter = None):
 
         if not user:
             await ctx.send('Please provide a user.')
@@ -159,12 +173,16 @@ class Moderation(commands.Cog):
             await ctx.send(f'User {user.name} has been unbanned successfully.')
             return
 
-        unban_embed = discord.Embed(title='Unbanned', description='A user have been Unbanned.', color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
+        unban_embed = discord.Embed(title='Unbanned', description='A user have been Unbanned.',
+                                    color=0xFFFFFF, timestamp=datetime.datetime.utcnow())
 
-        unban_embed.set_author(name=user.name, url=discord.Embed.Empty, icon_url=user.avatar_url)
+        unban_embed.set_author(
+            name=user.name, url=discord.Embed.Empty, icon_url=user.avatar_url)
 
-        unban_embed.add_field(name='Offender:', value=user.name + user.mention, inline=True)
-        unban_embed.add_field(name='Responsible moderator:', value=ctx.author.name, inline=True)
+        unban_embed.add_field(
+            name='Offender:', value=user.name + user.mention, inline=True)
+        unban_embed.add_field(name='Responsible moderator:',
+                              value=ctx.author.name, inline=True)
 
         unban_embed.set_footer(text=f'UserID: {user.id}')
 
@@ -178,7 +196,7 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @is_mod()
     @commands.cooldown(1, 5, type=commands.BucketType.user)
-    async def dm(self, ctx, user: commands.MemberConverter=None, *, message=None):
+    async def dm(self, ctx, user: commands.MemberConverter = None, *, message=None):
 
         if not user:
             await ctx.send('Please provide a user.')
@@ -209,7 +227,7 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @is_mod()
     @commands.cooldown(1, 5, type=commands.BucketType.user)
-    async def say_in_channel(self, ctx, channel: commands.TextChannelConverter=None, *, message=None):
+    async def say_in_channel(self, ctx, channel: commands.TextChannelConverter = None, *, message=None):
 
         if not channel:
             await ctx.send('Please provide a channel.')
@@ -226,7 +244,7 @@ class Moderation(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
     @commands.cooldown(1, 5, type=commands.BucketType.user)
-    async def purge(self, ctx, messages: int=None):
+    async def purge(self, ctx, messages: int = None):
         if not messages:
             await ctx.send('Please specify the number of messages to purge.')
             return
@@ -240,7 +258,7 @@ class Moderation(commands.Cog):
     @commands.has_permissions(administrator=True)
     @commands.cooldown(1, 10, type=commands.BucketType.user)
     async def purge_unverified(self, ctx):
-        q = await ctx.send('Would you like to DM them too?')
+        await ctx.send('Would you like to DM them too?')
         answers = ['y', 'Y', 'yes', 'Yes']
 
         def check(msg):
@@ -248,14 +266,15 @@ class Moderation(commands.Cog):
         try:
             msg = await ctx.bot.wait_for('message', check=check, timeout=30.0)
 
-            dm = True if msg.content in answers else False
+            dm = bool(msg.content in answers)
 
             if dm:
-                q2 = await ctx.send('What do you want me to DM them?')
+                await ctx.send('What do you want me to DM them?')
                 msg2 = await ctx.bot.wait_for('message', check=check, timeout=30.0)
                 dm_message = msg2.content
 
-            guild = guilds_collection.find_one(filter={"guild_id": ctx.guild.id})
+            guild = guilds_collection.find_one(
+                filter={"guild_id": ctx.guild.id})
 
             try:
                 verified_role_id = guild['verified_role']
@@ -272,7 +291,8 @@ class Moderation(commands.Cog):
             progress = await ctx.send('Lemme calculate now...')
             bots = [x for x in ctx.guild.members if x.bot]
             total_members = ctx.guild.members
-            unverified = [x for x in total_members if not verified_role in x.roles]
+            unverified = [
+                x for x in total_members if not verified_role in x.roles]
 
             if len(unverified) - len(bots) <= 0:
                 await ctx.send('No unverified people detected.')
@@ -280,15 +300,16 @@ class Moderation(commands.Cog):
 
             await progress.edit(content=f'So... from a total number of `{len(total_members)} members`, About `{len(unverified) - len(bots)}` members are unverfied excluding `{len(bots)}` bots..')
 
-
-            q3 = await ctx.send('Do you still wanna continue? (Make sure i have `kick_members` permission)')
+            await ctx.send('Do you still wanna continue? (Make sure i have `kick_members` permission)')
             msg3 = await ctx.bot.wait_for('message', check=check, timeout=30.0)
-            if not msg3.content in answers: return
+            if not msg3.content in answers:
+                return
 
             progress2 = await ctx.send('Working on it, Please be patient.')
 
             for member in unverified:
-                if member.bot: continue
+                if member.bot:
+                    continue
                 if dm:
                     try:
                         await member.send(dm_message)
@@ -296,9 +317,10 @@ class Moderation(commands.Cog):
                         await progress2.edit(content=f'Can\'t DM this user: {member}, Skipping...')
 
                 await member.kick(reason='Automatic action by jeju\'s `purge_unverified` command.')
-            else:
-                await progress2.edit(content='All done!')
-                print(f'Purge unverified command has been used in: {ctx.guild.name} : {ctx.guild.id}')
+
+            await progress2.edit(content='All done!')
+            print(
+                f'Purge unverified command has been used in: {ctx.guild.name} : {ctx.guild.id}')
 
         except asyncio.TimeoutError:
             await ctx.send('Timed out, Please try again later.')

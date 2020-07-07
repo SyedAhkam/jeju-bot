@@ -19,6 +19,8 @@ guilds_collection = db.guilds
 bot_collection = db.bot
 
 # For eval command
+
+
 def insert_returns(body):
     # insert return stmt if the last expression is a expression statement
     if isinstance(body[-1], ast.Expr):
@@ -35,6 +37,8 @@ def insert_returns(body):
         insert_returns(body[-1].body)
 
 # Main Cog Class
+
+
 class OwnerOnly(commands.Cog):
 
     # Initialize the class
@@ -123,7 +127,8 @@ class OwnerOnly(commands.Cog):
 
         for guild in ctx.bot.guilds:
 
-            exists = guilds_collection.count_documents(filter={"guild_id": guild.id}) > 0
+            exists = guilds_collection.count_documents(
+                filter={"guild_id": guild.id}) > 0
             if exists:
                 already_in_db += 1
             else:
@@ -157,24 +162,26 @@ class OwnerOnly(commands.Cog):
 
     @commands.command(name='blacklist', help='Blacklist a user from using the bot commands.')
     @commands.is_owner()
-    async def blacklist(self, ctx, user: discord.Member=None):
+    async def blacklist(self, ctx, user: discord.Member = None):
 
         if not user:
             await ctx.send('Please specify a user to blacklist.')
             return
 
-        bot_collection.update_one({}, {"$push": {"blacklisted_users": user.id}})
+        bot_collection.update_one(
+            {}, {"$push": {"blacklisted_users": user.id}})
         await ctx.send(f'User {user.name} with id: {user.id} have been blacklisted successfully.')
 
     @commands.command(name='unblacklist', help='Remove a user from blacklist.')
     @commands.is_owner()
-    async def unblacklist(self, ctx, user: discord.Member=None):
+    async def unblacklist(self, ctx, user: discord.Member = None):
 
         if not user:
             await ctx.send('Please specify a user to unblacklist.')
             return
 
-        bot_collection.update_one({}, {"$pull": {"blacklisted_users": user.id}})
+        bot_collection.update_one(
+            {}, {"$pull": {"blacklisted_users": user.id}})
         await ctx.send(f'User {user.name} with id: {user.id} have been removed from blacklist successfully.')
 
     @commands.command(name='change_presence', help='Change presence of the bot.')
@@ -190,7 +197,7 @@ class OwnerOnly(commands.Cog):
         if not presence_text:
             await ctx.send('Please provide a text to be set as the bot\'s presence.')
             return
-        
+
         if presence_type.lower() == 'playing':
             game = discord.Game(presence_text)
             await ctx.bot.change_presence(status=discord.Status.online, activity=game)
@@ -198,23 +205,26 @@ class OwnerOnly(commands.Cog):
             await ctx.send(f'Changed presence to ``{presence_text}``')
 
         elif presence_type.lower() == 'streaming':
-            stream = discord.Streaming(name=presence_text, url='https://www.twitch.tv/syed_ahkam')
+            stream = discord.Streaming(
+                name=presence_text, url='https://www.twitch.tv/syed_ahkam')
             await ctx.bot.change_presence(status=discord.Status.online, activity=stream)
 
             await ctx.send(f'Changed presence to ``{presence_text}``')
 
         elif presence_type.lower() == 'listening':
-            listening = discord.Activity(type=discord.ActivityType.listening, name=presence_text)
+            listening = discord.Activity(
+                type=discord.ActivityType.listening, name=presence_text)
             await ctx.bot.change_presence(status=discord.Status.online, activity=listening)
 
             await ctx.send(f'Changed presence to ``{presence_text}``')
 
         elif presence_type.lower() == 'watching':
-            activity = discord.Activity(type=discord.ActivityType.watching, name=presence_text)
+            activity = discord.Activity(
+                type=discord.ActivityType.watching, name=presence_text)
             await ctx.bot.change_presence(status=discord.Status.online, activity=activity)
 
             await ctx.send(f'Changed presence to ``{presence_text}``')
-        
+
         else:
             await ctx.send(f'Invalid Presence Type\nAvailable types: ``{",".join(types)}``')
 
@@ -226,5 +236,7 @@ class OwnerOnly(commands.Cog):
         await ctx.bot.logout()
 
 # Define setup function to make this cog loadable
+
+
 def setup(bot):
     bot.add_cog(OwnerOnly(bot))

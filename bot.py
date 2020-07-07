@@ -16,7 +16,7 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 MONGO_URI = os.getenv('MONGODB_URI')
 
-#Initialize MongoClient
+# Initialize MongoClient
 mongo_client = MongoClient(MONGO_URI)
 db = mongo_client.jeju
 
@@ -30,7 +30,8 @@ def get_prefix(bot, message):
 
     # If it is a guild then find a custom prefix
     if message.guild:
-        guild = guilds_collection.find_one(filter={"guild_id": message.guild.id})
+        guild = guilds_collection.find_one(
+            filter={"guild_id": message.guild.id})
         return commands.when_mentioned_or(guild['guild_prefix'])(bot, message)
 
     # Else default to +
@@ -39,15 +40,19 @@ def get_prefix(bot, message):
 
 # Initialize the bot
 bot = commands.Bot(command_prefix=get_prefix, case_insensitive=True)
-bot.start_time = datetime.datetime.now() # Store the start time to calculate uptime later
+# Store the start time to calculate uptime later
+bot.start_time = datetime.datetime.now()
 
 # On_ready event
+
+
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to discord!')
 
     # Change the presence
-    activity = discord.Activity(type=discord.ActivityType.watching, name="+help | In Development")
+    activity = discord.Activity(
+        type=discord.ActivityType.watching, name="+help | In Development")
     await bot.change_presence(status=discord.Status.online, activity=activity)
     print('Status changed')
 
@@ -65,7 +70,8 @@ async def on_message(message):
 
         # Get the prefix
         if message.guild:
-            guild = guilds_collection.find_one(filter={"guild_id": message.guild.id})
+            guild = guilds_collection.find_one(
+                filter={"guild_id": message.guild.id})
             prefix = guild['guild_prefix']
         else:
             prefix = '+'
@@ -78,7 +84,8 @@ async def on_message(message):
     # If mentioned in in a message, then tell the user available prefixes
     if bot.user.mentioned_in(message):
         if message.guild:
-            guild = guilds_collection.find_one(filter={"guild_id": message.guild.id})
+            guild = guilds_collection.find_one(
+                filter={"guild_id": message.guild.id})
             prefixes = [str(guild['guild_prefix']), '@mention']
         else:
             prefixes = ['+', '@mention']
@@ -90,19 +97,22 @@ async def on_message(message):
     await bot.process_commands(message)
 
 # on_member_join event
+
+
 @bot.event
 async def on_member_join(member):
 
-    guild_doc = guilds_collection.find_one(filter={"guild_id": member.guild.id})
+    guild_doc = guilds_collection.find_one(
+        filter={"guild_id": member.guild.id})
 
     # Check if a join message is set in the guild
-    if not 'join_channel' in guild_doc:
+    if 'join_channel' not in guild_doc:
         return
 
     if not guild_doc['join_channel']:
         return
 
-    if not 'join_message' in guild_doc:
+    if 'join_message' not in guild_doc:
         return
 
     if not guild_doc['join_message']:
@@ -114,34 +124,42 @@ async def on_member_join(member):
     formatted_message = guild_doc['join_message']
 
     if '{user}' in formatted_message:
-            formatted_message = formatted_message.replace('{user}', member.name)
+        formatted_message = formatted_message.replace('{user}', member.name)
 
     if '{user_mention}' in formatted_message:
-        formatted_message = formatted_message.replace('{user_mention}', member.mention)
+        formatted_message = formatted_message.replace(
+            '{user_mention}', member.mention)
 
     if '{user_id}' in formatted_message:
-        formatted_message = formatted_message.replace('{user_id}', str(member.id))
+        formatted_message = formatted_message.replace(
+            '{user_id}', str(member.id))
 
     if '{user_tag}' in formatted_message:
-        formatted_message = formatted_message.replace('{user_tag}', f'{member.name}#{member.discriminator}')
+        formatted_message = formatted_message.replace(
+            '{user_tag}', f'{member.name}#{member.discriminator}')
 
     if '{server}' in formatted_message:
-        formatted_message = formatted_message.replace('{server}', member.guild.name)
+        formatted_message = formatted_message.replace(
+            '{server}', member.guild.name)
 
     if '{server_members}' in formatted_message:
-            formatted_message = formatted_message.replace('{server_members}', len(member.guild.members))
+        formatted_message = formatted_message.replace(
+            '{server_members}', len(member.guild.members))
 
     # Then finally send it to the join_channel
     await join_channel.send(formatted_message)
 
 # on_member_remove event
+
+
 @bot.event
 async def on_member_remove(member):
 
-    guild_doc = guilds_collection.find_one(filter={"guild_id": member.guild.id})
+    guild_doc = guilds_collection.find_one(
+        filter={"guild_id": member.guild.id})
 
     # Check if a leave message is set in the guild
-    if not 'leave_channel' in guild_doc:
+    if 'leave_channel' not in guild_doc:
         return
 
     if not guild_doc['leave_channel']:
@@ -159,27 +177,34 @@ async def on_member_remove(member):
     formatted_message = guild_doc['leave_message']
 
     if '{user}' in formatted_message:
-            formatted_message = formatted_message.replace('{user}', member.name)
+        formatted_message = formatted_message.replace('{user}', member.name)
 
     if '{user_mention}' in formatted_message:
-        formatted_message = formatted_message.replace('{user_mention}', member.mention)
+        formatted_message = formatted_message.replace(
+            '{user_mention}', member.mention)
 
     if '{user_id}' in formatted_message:
-        formatted_message = formatted_message.replace('{user_id}', str(member.id))
+        formatted_message = formatted_message.replace(
+            '{user_id}', str(member.id))
 
     if '{user_tag}' in formatted_message:
-        formatted_message = formatted_message.replace('{user_tag}', f'{member.name}#{member.discriminator}')
+        formatted_message = formatted_message.replace(
+            '{user_tag}', f'{member.name}#{member.discriminator}')
 
     if '{server}' in formatted_message:
-        formatted_message = formatted_message.replace('{server}', member.guild.name)
+        formatted_message = formatted_message.replace(
+            '{server}', member.guild.name)
 
     if '{server_members}' in formatted_message:
-            formatted_message = formatted_message.replace('{server_members}', len(member.guild.members))
+        formatted_message = formatted_message.replace(
+            '{server_members}', len(member.guild.members))
 
     # Then finally send it to the leave_channel
     await leave_channel.send(formatted_message)
 
 # on_guild_join event, Just to get the guild info in db
+
+
 @bot.event
 async def on_guild_join(guild):
 
@@ -228,13 +253,13 @@ async def on_command_error(ctx, error):
 
     # Catching other errors
     elif isinstance(error, commands.errors.DisabledCommand):
-        return await ctx.send(f'This command has been disabled by the owner, Ask them to enable it.')
+        return await ctx.send('This command has been disabled by the owner, Ask them to enable it.')
 
     elif isinstance(error, commands.errors.NoPrivateMessage):
-            try:
-                return await ctx.author.send(f'{ctx.command} command can not be used in Private Messages.')
-            except:
-                pass
+        try:
+            return await ctx.author.send(f'{ctx.command} command can not be used in Private Messages.')
+        except:
+            pass
 
     elif isinstance(error, commands.errors.CheckFailure):
         if isinstance(error, commands.errors.NotOwner):
@@ -253,11 +278,11 @@ async def on_command_error(ctx, error):
         return await ctx.send(f'This command is on cooldown.\n Please wait ``{round(error.retry_after)}`` more seconds.')
 
     elif isinstance(error, commands.errors.ExtensionError):
-        if isinstance(error,commands.errors.ExtensionNotFound):
+        if isinstance(error, commands.errors.ExtensionNotFound):
             return await ctx.send(f'Extension with name ``{error.name}`` not found.')
-        elif isinstance(error,commands.errors.ExtensionAlreadyLoaded):
+        elif isinstance(error, commands.errors.ExtensionAlreadyLoaded):
             return await ctx.send(f'Extension with name ``{error.name}`` already loaded.')
-        elif isinstance(error,commands.errors.ExtensionNotLoaded):
+        elif isinstance(error, commands.errors.ExtensionNotLoaded):
             return await ctx.send(f'Extension with name ``{error.name}`` not loaded.')
         elif isinstance(error, commands.errors.ExtensionFailed):
             return await ctx.send(f'Extension with name ``{error.name}`` failed to load.')

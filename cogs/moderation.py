@@ -292,7 +292,7 @@ class Moderation(commands.Cog):
             bots = [x for x in ctx.guild.members if x.bot]
             total_members = ctx.guild.members
             unverified = [
-                x for x in total_members if not verified_role in x.roles]
+                x for x in total_members if verified_role not in x.roles]
 
             if len(unverified) - len(bots) <= 0:
                 await ctx.send('No unverified people detected.')

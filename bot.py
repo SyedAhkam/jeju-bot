@@ -203,7 +203,6 @@ async def on_guild_join(guild):
         "join_message_set": False,
         "leave_message": None,
         "leave_message_set": False,
-        "venting_channel":False,
         "verified_role": None
     }
     guilds_collection.insert_one(post)

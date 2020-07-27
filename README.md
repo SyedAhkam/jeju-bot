@@ -19,13 +19,12 @@ A discord bot made with [discord.py](https://github.com/Rapptz/discord.py).
 ```shell
 git clone https://github.com/SyedAhkam/jeju-bot.git
 cd jeju-bot
-pipenv shell
 touch .env
 pipenv install
 python3 bot.py
 ```
 
-Make sure to put these info in `.env` file:
+### Make sure to put these info in `.env` file:
 
 1. DISCORD_TOKEN
 2. MONGODB_URI

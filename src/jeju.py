@@ -4,6 +4,7 @@ from utils.logger import bot_logger
 
 import logging
 import os
+import discord
 
 # Setup logging
 discord_logger = logging.getLogger('discord')
@@ -17,7 +18,12 @@ load_dotenv()
 class Jeju(commands.Bot):
     """Subclassing bot for more control, May help in the future."""
     def __init__(self):
-        super().__init__(command_prefix=get_prefix, case_insensitive=True)
+        super().__init__(
+            command_prefix=get_prefix,
+            case_insensitive=True,
+            help_command=None,
+            activity = discord.Activity(type=discord.ActivityType.watching, name='+help | Rewriting...')
+            )
 
     def is_env_dev(self):
         """A simple method for checking if the bot is running in dev environment."""

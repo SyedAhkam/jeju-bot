@@ -1,8 +1,5 @@
 from discord.ext import commands
-
-import logging
-
-logger = logging.getLogger('bot')
+from utils.logger import bot_logger
 
 class Info(commands.Cog):
     def __init__(self, bot):
@@ -10,8 +7,7 @@ class Info(commands.Cog):
 
     @commands.command()
     async def test(self, ctx):
-        logger.info('OK')
-        self.bot.logger.info('aaaaaaaa')
+        bot_logger.info('OK')
         await ctx.send('everything ok')
 
 def setup(bot):

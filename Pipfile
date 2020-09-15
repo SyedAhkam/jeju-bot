@@ -15,6 +15,7 @@ ago = "*"
 asyncio = "*"
 discord-ext-menus = {git = "https://github.com/Rapptz/discord-ext-menus"}
 jikanpy = "*"
+motor = "*"
 
 [requires]
 python_version = "3.8"

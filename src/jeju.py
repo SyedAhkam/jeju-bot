@@ -1,5 +1,6 @@
 from discord.ext import commands
 from dotenv import load_dotenv
+from motor.motor_asyncio import AsyncIOMotorClient
 from utils.logger import bot_logger
 
 import logging
@@ -36,6 +37,7 @@ async def get_prefix(bot, message):
 if __name__ == '__main__':
     # Initialize the bot
     bot = Jeju()
+    bot.db = AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju_dev if bot.is_env_dev() else AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju
 
     # Load cogs from cogs directory
     ignored_cogs = ()

@@ -1,5 +1,6 @@
 from discord.ext import commands
 from dotenv import load_dotenv
+from utils.logger import bot_logger
 
 import logging
 import os
@@ -7,7 +8,7 @@ import os
 # Setup logging
 discord_logger = logging.getLogger('discord')
 discord_logger.setLevel(logging.DEBUG)
-discord_logger_handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+discord_logger_handler = logging.FileHandler(filename='../discord.log', encoding='utf-8', mode='w')
 discord_logger_handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 discord_logger.addHandler(discord_logger_handler)
 
@@ -37,7 +38,7 @@ if __name__ == '__main__':
             if filename[:-3] in ignored_cogs:
                 continue
             bot.load_extension(f'cogs.{filename[:-3]}')
-            # bot.logger.info(f'Loaded cog: {filename}')
+            bot_logger.info(f'Loaded cog: {filename}')
 
 
     bot.run(os.getenv('DISCORD_TOKEN_DEV' if bot.is_env_dev() else 'DISCORD_TOKEN'))

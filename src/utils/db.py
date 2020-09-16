@@ -14,3 +14,9 @@ async def add_guild(guilds_collection, guild):
 async def remove_guild(guilds_collection, guild_id):
     """Remove a guild from db."""
     await guilds_collection.delete_one({'_id': guild_id})
+
+async def get_custom_prefix(guilds_collection, guild_id):
+    """Gets a custom prefix from guild document of a guild."""
+    doc = await get_guild(guilds_collection, guild_id)
+
+    return doc['bot_prefix']

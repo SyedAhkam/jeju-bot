@@ -12,7 +12,8 @@ class Events(commands.Cog):
 
     async def command_after_invoke(self, ctx):
         """Log the invokation of a command."""
-        bot_logger.info(f'Command: {ctx.command.name} invoked by the user {ctx.author.name} in {ctx.guild.name}')
+        location = ctx.guild.name if ctx.guild else 'DMs'
+        bot_logger.info(f'Command: {ctx.command.name} invoked by the user {ctx.author.name} in {location}')
 
     @commands.Cog.listener()
     async def on_ready(self):

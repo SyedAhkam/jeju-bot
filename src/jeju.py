@@ -2,6 +2,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 from utils.logger import bot_logger
+from utils.db import get_custom_prefix
 
 import logging
 import os
@@ -31,8 +32,12 @@ class Jeju(commands.Bot):
         return (os.getenv('DEV').lower() == 'true')
 
 async def get_prefix(bot, message):
-    """Get custom prefix."""
-    return '++' if bot.is_env_dev() else '+'
+    """Get custom prefix depending whether they are in a guild or not."""
+    default_prefix = '++' if bot.is_env_dev() else '+'
+    if message.guild:
+        custom_prefix = await get_custom_prefix(bot.db.guilds, message.guild.id)
+        return commands.when_mentioned_or(custom_prefix)(bot, message)
+    return commands.when_mentioned_or(default_prefix)(bot, message)
 
 if __name__ == '__main__':
     # Initialize the bot

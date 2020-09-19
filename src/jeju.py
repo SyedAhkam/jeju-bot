@@ -30,7 +30,8 @@ class Jeju(commands.Bot):
         self.db = AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju_dev if self.is_env_dev() else AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju
         self.start_time = datetime.now()
 
-    def is_env_dev(self):
+    @staticmethod
+    def is_env_dev():
         """A simple method for checking if the bot is running in dev environment."""
         return (os.getenv('DEV').lower() == 'true')
 

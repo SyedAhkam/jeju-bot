@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 from utils.logger import bot_logger
 from utils.db import get_custom_prefix
+from datetime import datetime
 
 import logging
 import os
@@ -26,6 +27,8 @@ class Jeju(commands.Bot):
             help_command=None,
             activity = discord.Activity(type=discord.ActivityType.watching, name='+help | Rewriting...')
             )
+        self.db = AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju_dev if self.is_env_dev() else AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju
+        self.start_time = datetime.now()
 
     def is_env_dev(self):
         """A simple method for checking if the bot is running in dev environment."""
@@ -42,7 +45,6 @@ async def get_prefix(bot, message):
 if __name__ == '__main__':
     # Initialize the bot
     bot = Jeju()
-    bot.db = AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju_dev if bot.is_env_dev() else AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju
 
     # Load cogs from cogs directory
     ignored_cogs = ()
@@ -52,6 +54,5 @@ if __name__ == '__main__':
                 continue
             bot.load_extension(f'cogs.{filename[:-3]}')
             bot_logger.info(f'Loaded cog: {filename}')
-
 
     bot.run(os.getenv('DISCORD_TOKEN_DEV' if bot.is_env_dev() else 'DISCORD_TOKEN'))

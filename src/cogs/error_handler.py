@@ -5,7 +5,7 @@ from utils.embeds import error_embed
 class ErrorHandler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.ignored = ()
+        self.ignored = (commands.CommandNotFound)
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):

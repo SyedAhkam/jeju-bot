@@ -6,9 +6,11 @@ colors = {
     'error': 0xff033e
 }
 
-def normal_embed(title=Embed.Empty, description=Embed.Empty):
+def normal_embed(ctx, title=Embed.Empty, description=Embed.Empty):
     """An embed for common use"""
-    return Embed(title=title, description=description, color=colors['normal'])
+    embed = Embed(description=description, color=colors['normal'])
+    embed.set_author(name=title, icon_url=ctx.bot.user.avatar_url)
+    return embed
 
 def error_embed(ctx, error_name=Embed.Empty, error_msg=Embed.Empty):
     """An embed for use when handling errors"""

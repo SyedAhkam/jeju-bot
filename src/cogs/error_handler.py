@@ -1,5 +1,4 @@
 from discord.ext import commands
-from utils.logger import bot_logger
 from utils.embeds import error_embed
 
 class ErrorHandler(commands.Cog):

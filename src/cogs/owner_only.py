@@ -28,7 +28,10 @@ class OwnerOnly(commands.Cog):
         ctx.bot.unload_extension(f'cogs.{extension}')
         await ctx.send(f'{extension} unloaded Successfully.')
 
-    @commands.command(name='reload', brief='Reloads a specified category.')
+    @commands.command(
+        name='reload',
+        brief='Reloads a specified category.'
+    )
     async def reload(self, ctx, extension):
         ctx.bot.unload_extension(f'cogs.{extension}')
         ctx.bot.load_extension(f'cogs.{extension}')

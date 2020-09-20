@@ -100,7 +100,8 @@ class Help(commands.Cog):
             'Eval'
         ]
 
-    def format_command_usage(self, ctx, command):
+    @staticmethod
+    def format_command_usage(ctx, command):
         """Format command usages to show aliases and params"""
         cmd_and_aliases = "|".join([str(command), *command.aliases])
 

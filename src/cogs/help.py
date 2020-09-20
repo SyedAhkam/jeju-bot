@@ -137,7 +137,7 @@ class Help(commands.Cog):
             title='Help!',
             description=command.help or "No Help Message"
         )
-        embed.set_thumbnail(url=ctx.guild.icon_url if ctx.guild else self.ctx.author.avatar_url)
+        embed.set_thumbnail(url=ctx.guild.icon_url if ctx.guild else ctx.author.avatar_url)
 
         embed.add_field(name='Name:', value=command.name, inline=True)
         embed.add_field(name='Category:', value=command.cog.qualified_name, inline=True)

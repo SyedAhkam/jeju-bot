@@ -97,7 +97,8 @@ class Help(commands.Cog):
             'Help',
             'Events',
             'OwnerOnly',
-            'Eval'
+            'Eval',
+            'BotCheck'
         ]
 
     @staticmethod

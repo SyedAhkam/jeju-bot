@@ -1,5 +1,6 @@
 from discord.ext import commands
 from utils.embeds import error_embed
+import exceptions
 
 class ErrorHandler(commands.Cog):
     def __init__(self, bot):
@@ -12,6 +13,24 @@ class ErrorHandler(commands.Cog):
         error = getattr(error, 'original', error)
 
         if isinstance(error, self.ignored):
+            return
+
+        if isinstance(error, exceptions.UserBlacklistedError):
+            if error.global_:
+                embed = error_embed(
+                    ctx,
+                    error_name='Blacklisted',
+                    error_msg='Sorry, You\'ve been blacklisted from using any of my commands globally.\nPlease stop trying to use them.'
+                )
+                await ctx.send(embed=embed)
+            else:
+                embed = error_embed(
+                    ctx,
+                    error_name='Blacklisted',
+                    error_msg='Sorry, You\'ve been blacklisted from using any of my commands in this server.\nPlease stop trying to use them.'
+                )
+                await ctx.send(embed=embed)
+
             return
 
         if isinstance(error, commands.DisabledCommand):

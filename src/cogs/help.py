@@ -153,7 +153,7 @@ class Help(commands.Cog):
         aliases=['h'],
         brief='Shows this message.'
     )
-    async def help(self, ctx, category_or_command=None):
+    async def help(self, ctx, *, category_or_command=None):
         """Shows the help message for the bot."""
         if category_or_command:
             cog = self.bot.get_cog(category_or_command.lower())

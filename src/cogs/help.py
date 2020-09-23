@@ -98,7 +98,8 @@ class Help(commands.Cog):
             'Events',
             'OwnerOnly',
             'Eval',
-            'BotCheck'
+            'BotCheck',
+            'Jishaku'
         ]
 
     @staticmethod

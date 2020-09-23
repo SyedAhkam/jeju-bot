@@ -27,6 +27,7 @@ class Jeju(commands.Bot):
             help_command=None,
             activity = discord.Activity(type=discord.ActivityType.watching, name='+help | Rewriting...')
             )
+        self.load_extension('jishaku')
         self.db = AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju_dev if self.is_env_dev() else AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju
         self.start_time = datetime.now()
 
@@ -48,7 +49,7 @@ if __name__ == '__main__':
     bot = Jeju()
 
     # Load cogs from cogs directory
-    ignored_cogs = ()
+    ignored_cogs = ('eval')
     for filename in os.listdir('./cogs'):
         if filename.endswith('.py'):
             if filename[:-3] in ignored_cogs:

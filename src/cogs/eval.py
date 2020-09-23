@@ -4,6 +4,7 @@ import ast
 import os
 
 # I didn't make this command, I found it somewhere on github
+# not in use anymore
 
 def insert_returns(body):
     # insert return stmt if the last expression is a expression statement

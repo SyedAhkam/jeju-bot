@@ -8,6 +8,7 @@ from datetime import datetime
 import logging
 import os
 import discord
+import aiohttp
 
 # Setup logging
 discord_logger = logging.getLogger('discord')
@@ -30,6 +31,7 @@ class Jeju(commands.Bot):
         self.load_extension('jishaku')
         self.db = AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju_dev if self.is_env_dev() else AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju
         self.start_time = datetime.now()
+        self.aio_session = aiohttp.ClientSession()
 
     @staticmethod
     def is_env_dev():

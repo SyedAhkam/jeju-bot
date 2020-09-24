@@ -33,6 +33,14 @@ class ErrorHandler(commands.Cog):
 
             return
 
+        if isinstance(error, exceptions.ApiFetchError):
+            embed = error_embed(
+                ctx,
+                error_name='Api Fetch Error',
+                error_msg='Sorry, Failed to fetch data from an external api.\nMaybe try again later.'
+            )
+            await ctx.send(embed=embed)
+
         if isinstance(error, commands.DisabledCommand):
             embed = error_embed(
                 ctx,

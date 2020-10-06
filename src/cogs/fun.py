@@ -3,6 +3,7 @@ from utils.extras import fetch_json, ask__yes_or_no_question
 from utils.embeds import normal_embed
 
 class Fun(commands.Cog, name='fun'):
+    """Basic commands for you to have fun."""
     def __init__(self, bot):
         self.bot = bot
         self.memeapi_base_url = 'https://meme-api.herokuapp.com/gimme'

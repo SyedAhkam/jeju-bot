@@ -92,7 +92,7 @@ class Help(commands.Cog):
                 embed = error_embed(
                     ctx,
                     error_name='No Command or Category',
-                    error_msg=f'Sorry, There\'s no command or category by the name: `{category_or_command}`\nYou should try out just ``{ctx.prefix}help.``'
+                    error_msg=f'Sorry, There\'s no command or category by the name: `{category_or_command}`\nYou should try out just ``{ctx.prefix}help``.'
                 )
                 await ctx.send(embed=embed)
         else:

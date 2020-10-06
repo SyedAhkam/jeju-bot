@@ -12,7 +12,7 @@ class Info(commands.Cog, name='info'):
         brief='Check the discord ws latency.'
     )
     async def ping(self, ctx):
-        """Get the bot's latency in ms's
+        """Get the bot's latency in ms's.
         This could be referred to as the Discord WebSocket protocol latency.
         If you're experiencing high latency then probably something's up on the discord side. https://status.discord.com
         """

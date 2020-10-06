@@ -16,9 +16,9 @@ class HelpMainMenu(ListPageSource):
             self.ctx,
             title='Help!',
             description=cleandoc(
-                f"""Hi, Thanks for inviting the bot!
-                Tip: Do `{self.ctx.prefix}help <category or command_name>` to get more info about them!
-                Examples: ```
+                f"""**Hi, Thanks for inviting the bot!**
+                **Tip**: Do `{self.ctx.prefix}help <category or command_name>` to get more info about them!
+                **Examples**: ```bash
                 {self.ctx.prefix}help
                 {self.ctx.prefix}help info
                 {self.ctx.prefix}help ping
@@ -62,8 +62,8 @@ class HelpCogMenu(ListPageSource):
             self.ctx,
             title='Help!',
             description=cleandoc(
-                f"""Hi, Here you can see all the available commands under this category.
-                Tip: Do `{self.ctx.prefix}help <command_name>` to get more info on a command!
+                f"""**Hi, Here you can see all the available commands under this category.**
+                **Tip:** Do `{self.ctx.prefix}help <command_name>` to get more info on a command!
                 """
             )
         )

@@ -1,6 +1,6 @@
 from discord.ext import commands
 from utils.logger import bot_logger
-from utils.db import add_guild, remove_guild
+from utils.db import add_guild, remove_guild, delete_guild_config_values
 
 # TODO: on_member_join and on_member_remove maybe on_message too
 
@@ -8,6 +8,7 @@ class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.guilds_collection = bot.db.guilds
+        self.config_collection = bot.db.config
         bot.after_invoke(self.command_after_invoke)
 
     async def command_after_invoke(self, ctx):
@@ -35,6 +36,7 @@ class Events(commands.Cog):
         await app_info.owner.send(f'I got removed from this server: {guild.name} with {len(guild.members)} members :(')
 
         await remove_guild(self.guilds_collection, guild.id)
+        await delete_guild_config_values(self.config_collection, guild.id)
 
 def setup(bot):
     bot.add_cog(Events(bot))

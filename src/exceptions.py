@@ -6,8 +6,13 @@ class UserBlacklistedError(commands.CommandError):
         super().__init__(message=message)
         self.global_ = global_
 
-class ApiFetchError(commands.Cog):
-    """A custom exception raised when a api fetch doesn't return a status code of 200"""
+class ApiFetchError(commands.CommandError):
+    """A custom exception raised when a api fetch doesn't return a status code of 200."""
     def __init__(self, message=None, status=None):
         super().__init__(message=message)
         self.status = status
+
+class AdminPermsRequiredError(commands.CommandError):
+    """A custom exception raised when a command requires admin perms."""
+    def __init__(self, message=None):
+        super().__init__(message=message)

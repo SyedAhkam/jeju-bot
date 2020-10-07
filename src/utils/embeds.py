@@ -27,3 +27,11 @@ def error_embed(ctx, error_name=Embed.Empty, error_msg=Embed.Empty):
     embed.set_author(name=error_name, icon_url=ctx.bot.user.avatar_url)
     embed.set_footer(text=ctx.author.name, icon_url=ctx.author.avatar_url)
     return embed
+
+def list_commands_under_group(ctx, group):
+    description = ''
+    for command in group.commands:
+        to_be_added = f'**{command.name}** - {command.brief}\n'
+        description += to_be_added
+
+    return normal_embed(ctx, 'Available choices', description)

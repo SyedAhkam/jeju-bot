@@ -15,6 +15,15 @@ class ErrorHandler(commands.Cog):
         if isinstance(error, self.ignored):
             return
 
+        if isinstance(error, exceptions.AdminPermsRequiredError):
+            embed = error_embed(
+                ctx,
+                error_name='Admin Perms Required',
+                error_msg='Sorry, This command requires admin perms to execute.'
+            )
+            await ctx.send(embed=embed)
+            return
+
         if isinstance(error, exceptions.UserBlacklistedError):
             if error.global_:
                 embed = error_embed(

@@ -12,7 +12,7 @@ class Config(commands.Cog, name='config'):
 
     async def cog_check(self, ctx):
         if not ctx.guild:
-            return False
+            raise commands.NoPrivateMessage()
         if not ctx.author.guild_permissions.administrator:
             raise AdminPermsRequiredError()
         return True

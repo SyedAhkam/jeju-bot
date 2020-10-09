@@ -3,6 +3,7 @@ from utils.embeds import list_commands_under_group, error_embed, normal_embed
 from utils.db import set_config_value, is_config_value_set, get_config_value, update_config_value, delete_config_value
 from exceptions import AdminPermsRequiredError
 
+
 class Config(commands.Cog, name='config'):
     """All of the necessary commands required to configure the bot."""
 
@@ -82,7 +83,6 @@ class Config(commands.Cog, name='config'):
                 )
                 await ctx.send(embed=embed)
 
-
         else:
             embed = error_embed(
                 ctx,
@@ -91,6 +91,43 @@ class Config(commands.Cog, name='config'):
             )
             await ctx.send(embed=embed)
             return
+
+    async def _set_config_value(self, ctx, config_type, config_value, success_msg):
+        is_config_entry_exists = await is_config_value_set(
+            self.config_collection,
+            ctx.guild.id,
+            config_type
+        )
+
+        if is_config_entry_exists:
+            await update_config_value(
+                self.config_collection,
+                ctx.guild.id,
+                config_type,
+                config_value
+            )
+
+            embed = normal_embed(
+                ctx,
+                title='Set config value',
+                description=success_msg
+            )
+            await ctx.send(embed=embed)
+
+        else:
+            await set_config_value(
+                self.config_collection,
+                ctx.guild.id,
+                config_type,
+                config_value
+            )
+
+            embed = normal_embed(
+                ctx,
+                title='Set config value',
+                description=success_msg
+            )
+            await ctx.send(embed=embed)
 
     @commands.group(
         name='enable',
@@ -124,6 +161,22 @@ class Config(commands.Cog, name='config'):
         embed = list_commands_under_group(ctx, self._disable)
         await ctx.send(embed=embed)
 
+    @commands.group(
+        name='set',
+        brief='Set certain values required by the bot to customize features of the bot.',
+        invoke_without_command=True
+    )
+    async def _set(self, ctx):
+        """**You can set certain values of the bot using this command.**
+        **Tip**: You can do just `+set` to see all the available values.
+        **Examples**: ```bash
+        +set
+        +set log_channel #logs
+        ```
+        """
+        embed = list_commands_under_group(ctx, self._set)
+        await ctx.send(embed=embed)
+
     @_enable.command(
         name='logging',
         aliases=['logs'],
@@ -138,7 +191,7 @@ class Config(commands.Cog, name='config'):
         await self._enable_guild_feature(
             ctx,
             'is_logging_enabled',
-            'Successfully enabled logging in this guild/server.\nMake sure bot has the necessary permissions for the same.'
+            'Successfully enabled logging in this guild/server.\nMake sure bot has the necessary permissions for the same also setup a log channel using the `set` command.'
         )
 
     @_disable.command(
@@ -157,6 +210,27 @@ class Config(commands.Cog, name='config'):
             'is_logging_enabled',
             'Successfully disabled logging in this guild/server.\nYou can use the `enable` command to enable it again.'
         )
+
+    @_set.command(
+        name='log_channel',
+        aliases=['lc'],
+        brief='Set the log channel to be used for logging.'
+    )
+    async def set_log_channel(self, ctx, channel: commands.TextChannelConverter):
+        """**You can set the logging channel using this command.**
+        **Examples**: ```bash
+        +set log_channel #logs
+        +set lc #log-channel
+        +set log_channel 757236604690628609
+        ```
+        """
+        await self._set_config_value(
+            ctx,
+            'log_channel',
+            channel.id,
+            f'Successfully set `{channel.name}` as a logging channel.\nMake sure the bot has permissions to create and send webhooks in that channel.'
+        )
+
 
 def setup(bot):
     bot.add_cog(Config(bot))

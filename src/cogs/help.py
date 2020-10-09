@@ -4,6 +4,7 @@ from utils.embeds import normal_embed, error_embed
 from menus.help import HelpMainMenu, HelpCogMenu
 from inspect import cleandoc
 
+
 class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -14,7 +15,8 @@ class Help(commands.Cog):
             'OwnerOnly',
             'Eval',
             'BotCheck',
-            'Jishaku'
+            'Jishaku',
+            'Logging'
         ]
 
     @staticmethod
@@ -25,7 +27,8 @@ class Help(commands.Cog):
         params = []
         for key, value in command.params.items():
             if key not in ("self", "ctx"):
-                params.append(f"[{key}]" if "NoneType" in str(value) else f"<{key}>")
+                params.append(f"[{key}]" if "NoneType" in str(
+                    value) else f"<{key}>")
 
         params = " ".join(params)
 
@@ -50,7 +53,8 @@ class Help(commands.Cog):
             return
 
         menu = MenuPages(
-            source=HelpCogMenu(ctx, commands_runnable, self.format_command_usage),
+            source=HelpCogMenu(ctx, commands_runnable,
+                               self.format_command_usage),
             clear_reactions_after=True,
             timeout=60.0
         )
@@ -63,13 +67,17 @@ class Help(commands.Cog):
             title='Help!',
             description=command.help or "No Help Message"
         )
-        embed.set_thumbnail(url=ctx.guild.icon_url if ctx.guild else ctx.author.avatar_url)
+        embed.set_thumbnail(
+            url=ctx.guild.icon_url if ctx.guild else ctx.author.avatar_url)
 
         embed.add_field(name='Name:', value=command.name, inline=True)
-        embed.add_field(name='Category:', value=command.cog.qualified_name, inline=True)
-        embed.add_field(name='Aliases:', value=', '.join(command.aliases) or 'None', inline=True)
+        embed.add_field(name='Category:',
+                        value=command.cog.qualified_name, inline=True)
+        embed.add_field(name='Aliases:', value=', '.join(
+            command.aliases) or 'None', inline=True)
 
-        embed.add_field(name='Usage:', value=self.format_command_usage(ctx, command), inline=False)
+        embed.add_field(name='Usage:', value=self.format_command_usage(
+            ctx, command), inline=False)
 
         await ctx.send(embed=embed)
 
@@ -108,6 +116,7 @@ class Help(commands.Cog):
                 timeout=60.0
             )
             await menu.start(ctx)
+
 
 def setup(bot):
     bot.add_cog(Help(bot))

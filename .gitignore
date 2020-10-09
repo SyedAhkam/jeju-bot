@@ -4,4 +4,4 @@ jeju-env/
 test.py
 mongo.py
 .vscode
-cogs/__pycache__/
+*__pycache__/

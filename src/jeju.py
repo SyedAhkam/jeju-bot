@@ -13,23 +13,34 @@ import aiohttp
 # Setup logging
 discord_logger = logging.getLogger('discord')
 discord_logger.setLevel(logging.DEBUG)
-discord_logger_handler = logging.FileHandler(filename='../discord.log', encoding='utf-8', mode='w')
-discord_logger_handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+discord_logger_handler = logging.FileHandler(
+    filename='../discord.log', encoding='utf-8', mode='w')
+discord_logger_handler.setFormatter(logging.Formatter(
+    '%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 discord_logger.addHandler(discord_logger_handler)
 
 load_dotenv()
 
+# Intents
+intents = discord.Intents.default()
+intents.members = True
+
+
 class Jeju(commands.Bot):
     """Subclassing bot for more control, May help in the future."""
+
     def __init__(self):
         super().__init__(
             command_prefix=get_prefix,
             case_insensitive=True,
             help_command=None,
-            activity = discord.Activity(type=discord.ActivityType.watching, name='+help | Rewriting...')
-            )
+            activity=discord.Activity(
+                type=discord.ActivityType.watching, name='+help | Rewriting...'),
+            intents=intents
+        )
         self.load_extension('jishaku')
-        self.db = AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju_dev if self.is_env_dev() else AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju
+        self.db = AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju_dev if self.is_env_dev(
+        ) else AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju
         self.start_time = datetime.now()
         self.aio_session = aiohttp.ClientSession()
 
@@ -37,6 +48,7 @@ class Jeju(commands.Bot):
     def is_env_dev():
         """A simple method for checking if the bot is running in dev environment."""
         return (os.getenv('DEV').lower() == 'true')
+
 
 async def get_prefix(bot, message):
     """Get custom prefix depending whether they are in a guild or not."""

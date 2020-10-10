@@ -59,6 +59,9 @@ class Logging(commands.Cog):
         if not message:
             return
 
+        if not message.content:
+            return
+
         webhook = await self._get_webhook(message.guild)
         if not webhook:
             return

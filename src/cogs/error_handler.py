@@ -2,6 +2,7 @@ from discord.ext import commands
 from utils.embeds import error_embed
 import exceptions
 
+
 class ErrorHandler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -141,7 +142,8 @@ class ErrorHandler(commands.Cog):
                 missing_roles_list = []
                 for role in error.missing_roles:
                     missing_roles_list.append(ctx.guild.get_role(role))
-                missing_roles = ', '.join([role.name for role in missing_roles_list])
+                missing_roles = ', '.join(
+                    [role.name for role in missing_roles_list])
                 embed = error_embed(
                     ctx,
                     error_name='Missing Any Role',
@@ -154,7 +156,8 @@ class ErrorHandler(commands.Cog):
                 missing_roles_list = []
                 for role in error.missing_roles:
                     missing_roles_list.append(ctx.guild.get_role(role))
-                missing_roles = ', '.join([role.name for role in missing_roles_list])
+                missing_roles = ', '.join(
+                    [role.name for role in missing_roles_list])
                 embed = error_embed(
                     ctx,
                     error_name='Bot Missing Any Role',
@@ -220,7 +223,7 @@ class ErrorHandler(commands.Cog):
                     return
 
                 if isinstance(error, commands.BadUnionArgument):
-                    #TODO: do this later
+                    # TODO: do this later
                     pass
 
                 if isinstance(error, commands.TooManyArguments):
@@ -303,8 +306,10 @@ class ErrorHandler(commands.Cog):
         await ctx.send(embed=embed)
 
         app_info = await self.bot.application_info()
-        await app_info.owner.send(f'An error occured in {ctx.guild.id} while invoking command: {ctx.command.name}\n{error.__class__.__name__}: {str(error)}')
+        ctx_dict = f'```py\n{ctx.__dict__}\n```'
+        await app_info.owner.send(f'An error occured in {ctx.guild.id} while invoking command: {ctx.command.name}\n{error.__class__.__name__}: {str(error)}\n{ctx_dict}')
         raise error
+
 
 def setup(bot):
     bot.add_cog(ErrorHandler(bot))

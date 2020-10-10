@@ -43,6 +43,7 @@ def list_commands_under_group(ctx, group):
 
 
 def log_embed_info(title, bot, description=Embed.Empty):
+    """An embed for use in logging with a level of info."""
     embed = Embed(
         description=description,
         color=colors['normal'],
@@ -53,6 +54,7 @@ def log_embed_info(title, bot, description=Embed.Empty):
 
 
 def log_embed_warn(title, bot, description=Embed.Empty):
+    """An embed for use in logging with a level of warn."""
     embed = Embed(
         description=description,
         color=colors['warn'],
@@ -63,6 +65,7 @@ def log_embed_warn(title, bot, description=Embed.Empty):
 
 
 def log_embed_danger(title, bot, description=Embed.Empty):
+    """An embed for use in logging with a level of danger or critical."""
     embed = Embed(
         description=description,
         color=colors['error'],

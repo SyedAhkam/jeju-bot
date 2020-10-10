@@ -2,7 +2,6 @@ from discord.ext import commands
 from utils.logger import bot_logger
 from utils.db import add_guild, remove_guild, delete_guild_config_values
 
-# TODO: on_member_join and on_member_remove maybe on_message too
 
 class Events(commands.Cog):
     def __init__(self, bot):
@@ -14,7 +13,8 @@ class Events(commands.Cog):
     async def command_after_invoke(self, ctx):
         """Log the invokation of a command."""
         location = ctx.guild.name if ctx.guild else 'DMs'
-        bot_logger.info(f'Command: {ctx.command.name} invoked by the user {ctx.author.name} in {location}')
+        bot_logger.info(
+            f'Command: {ctx.command.name} invoked by the user {ctx.author.name} in {location}')
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -37,6 +37,7 @@ class Events(commands.Cog):
 
         await remove_guild(self.guilds_collection, guild.id)
         await delete_guild_config_values(self.config_collection, guild.id)
+
 
 def setup(bot):
     bot.add_cog(Events(bot))

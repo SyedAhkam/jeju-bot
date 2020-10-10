@@ -19,6 +19,7 @@ discord_logger_handler.setFormatter(logging.Formatter(
     '%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 discord_logger.addHandler(discord_logger_handler)
 
+# Load env variables
 load_dotenv()
 
 # Intents
@@ -26,8 +27,17 @@ intents = discord.Intents.default()
 intents.members = True
 
 
+async def get_prefix(bot, message):
+    """Get custom prefix depending whether they are in a guild or not."""
+    default_prefix = '++' if bot.is_env_dev() else '+'
+    if message.guild:
+        custom_prefix = await get_custom_prefix(bot.db.guilds, message.guild.id)
+        return commands.when_mentioned_or(custom_prefix)(bot, message)
+    return commands.when_mentioned_or(default_prefix)(bot, message)
+
+
 class Jeju(commands.Bot):
-    """Subclassing bot for more control, May help in the future."""
+    """Subclassing bot for more control."""
 
     def __init__(self):
         super().__init__(
@@ -39,28 +49,29 @@ class Jeju(commands.Bot):
             intents=intents
         )
         self.load_extension('jishaku')
-        self.db = AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju_dev if self.is_env_dev(
-        ) else AsyncIOMotorClient(os.getenv('MONGODB_URI')).jeju
+        self.motor_client = AsyncIOMotorClient(
+            os.getenv('MONGODB_URI'),
+            io_loop=self.loop
+        )
+        self.db = self.motor_client.jeju_dev if self.is_env_dev() else self.motor_client.jeju
         self.start_time = datetime.now()
         self.aio_session = aiohttp.ClientSession()
 
     @staticmethod
     def is_env_dev():
         """A simple method for checking if the bot is running in dev environment."""
-        return (os.getenv('DEV').lower() == 'true')
+        env = os.getenv('DEV', default=False)
+        if env:
+            return env.lower() == 'true'
+        return env
 
-
-async def get_prefix(bot, message):
-    """Get custom prefix depending whether they are in a guild or not."""
-    default_prefix = '++' if bot.is_env_dev() else '+'
-    if message.guild:
-        custom_prefix = await get_custom_prefix(bot.db.guilds, message.guild.id)
-        return commands.when_mentioned_or(custom_prefix)(bot, message)
-    return commands.when_mentioned_or(default_prefix)(bot, message)
 
 if __name__ == '__main__':
     # Initialize the bot
     bot = Jeju()
+
+    if bot.is_env_dev():
+        bot_logger.warning('Running in Development mode.')
 
     # Load cogs from cogs directory
     ignored_cogs = ('eval')
@@ -71,4 +82,15 @@ if __name__ == '__main__':
             bot.load_extension(f'cogs.{filename[:-3]}')
             bot_logger.info(f'Loaded cog: {filename}')
 
-    bot.run(os.getenv('DISCORD_TOKEN_DEV' if bot.is_env_dev() else 'DISCORD_TOKEN'))
+    if bot.is_env_dev():
+        DISCORD_TOKEN = os.getenv('DISCORD_TOKEN_DEV')
+    else:
+        DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
+
+    if not DISCORD_TOKEN:
+        bot_logger.critical('DISCORD_TOKEN environment variable not set!')
+
+    if not os.getenv('MONGODB_URI'):
+        bot_logger.critical('MONGODB_URI environment variable not set!')
+
+    bot.run(DISCORD_TOKEN)

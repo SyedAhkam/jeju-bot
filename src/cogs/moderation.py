@@ -1,6 +1,7 @@
 from discord.ext import commands
 from utils.embeds import normal_embed
 
+
 class Moderation(commands.Cog, name='moderation'):
     """All the moderation commands you'll ever need."""
 
@@ -25,6 +26,7 @@ class Moderation(commands.Cog, name='moderation'):
         )
 
         await ctx.send(embed=embed, delete_after=3)
+
 
 def setup(bot):
     bot.add_cog(Moderation(bot))

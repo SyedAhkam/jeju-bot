@@ -6,6 +6,7 @@ import os
 # I didn't make this command, I found it somewhere on github
 # not in use anymore
 
+
 def insert_returns(body):
     # insert return stmt if the last expression is a expression statement
     if isinstance(body[-1], ast.Expr):
@@ -20,6 +21,7 @@ def insert_returns(body):
     # for with blocks, again we insert returns into the body
     if isinstance(body[-1], ast.With):
         insert_returns(body[-1].body)
+
 
 class Eval(commands.Cog):
     def __init__(self, bot):
@@ -79,6 +81,7 @@ class Eval(commands.Cog):
 
         result = (await eval(f"{fn_name}()", env))
         await ctx.send(f'```py\n{result}\n```')
+
 
 def setup(bot):
     bot.add_cog(Eval(bot))

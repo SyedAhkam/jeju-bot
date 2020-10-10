@@ -30,6 +30,14 @@ async def get_custom_prefix(guilds_collection, guild_id):
     return doc['bot_prefix']
 
 
+async def set_custom_prefix(guilds_collection, guild_id, bot_prefix):
+    """Sets custom prefix for a guild."""
+    await guilds_collection.update_one(
+        {'_id': guild_id},
+        {'$set': {'bot_prefix': bot_prefix}}
+    )
+
+
 async def set_config_value(config_collection, guild_id, config_type, config_value):
     """Set a config value for a specific type and guild."""
     await config_collection.insert_one({

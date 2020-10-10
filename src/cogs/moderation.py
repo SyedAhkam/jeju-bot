@@ -14,6 +14,9 @@ class Moderation(commands.Cog, name='moderation'):
         )
 
     async def cog_check(self, ctx):
+        if not ctx.guild:
+            raise commands.NoPrivateMessage()
+
         bucket = self.cd_mapping.get_bucket(ctx.message)
         retry_after = bucket.update_rate_limit()
         if retry_after:

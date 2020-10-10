@@ -10,12 +10,21 @@ class Config(commands.Cog, name='config'):
     def __init__(self, bot):
         self.bot = bot
         self.config_collection = bot.db.config
+        self.cd_mapping = commands.CooldownMapping.from_cooldown(
+            1,
+            7,
+            commands.BucketType.member
+        )
 
     async def cog_check(self, ctx):
         if not ctx.guild:
             raise commands.NoPrivateMessage()
         if not ctx.author.guild_permissions.administrator:
             raise AdminPermsRequiredError()
+        bucket = self.cd_mapping.get_bucket(ctx.message)
+        retry_after = bucket.update_rate_limit()
+        if retry_after:
+            raise commands.CommandOnCooldown(self.cd_mapping, retry_after)
         return True
 
     async def _enable_guild_feature(self, ctx, config_type, success_msg):

@@ -9,6 +9,18 @@ class Fun(commands.Cog, name='fun'):
     def __init__(self, bot):
         self.bot = bot
         self.memeapi_base_url = 'https://meme-api.herokuapp.com/gimme'
+        self.cd_mapping = commands.CooldownMapping.from_cooldown(
+            3,
+            5,
+            commands.BucketType.user
+        )
+
+    async def cog_check(self, ctx):
+        bucket = self.cd_mapping.get_bucket(ctx.message)
+        retry_after = bucket.update_rate_limit()
+        if retry_after:
+            raise commands.CommandOnCooldown(self.cd_mapping, retry_after)
+        return True
 
     @commands.command(
         name='meme',

@@ -4,6 +4,7 @@ from utils.db import is_document_exists
 
 import discord
 
+
 class OwnerOnly(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -115,6 +116,7 @@ class OwnerOnly(commands.Cog):
         await self.global_blacklist_collection.delete_one({'_id': user.id})
 
         await ctx.send(f'Unblacklisted {user.name} globally!')
+
 
 def setup(bot):
     bot.add_cog(OwnerOnly(bot))

@@ -2,8 +2,10 @@ from discord.ext.menus import MenuPages, ListPageSource
 from utils.embeds import normal_embed
 from inspect import cleandoc
 
+
 class HelpMainMenu(ListPageSource):
     """This is the main menu for help command"""
+
     def __init__(self, ctx, data):
         super().__init__(data, per_page=10)
         self.ctx = ctx
@@ -26,7 +28,8 @@ class HelpMainMenu(ListPageSource):
                 """
             )
         )
-        menu_embed.set_thumbnail(url=self.ctx.guild.icon_url if self.ctx.guild else self.ctx.author.avatar_url)
+        menu_embed.set_thumbnail(
+            url=self.ctx.guild.icon_url if self.ctx.guild else self.ctx.author.avatar_url)
 
         menu_embed.set_footer(
             text=f"Showing {offset:,} - {min(len_data, offset+self.per_page-1):,} of {len_data:,} categories.",
@@ -34,7 +37,8 @@ class HelpMainMenu(ListPageSource):
         )
 
         for category in categories:
-            menu_embed.add_field(name=category[0].capitalize(), value=category[1], inline=False)
+            menu_embed.add_field(
+                name=category[0].capitalize(), value=category[1], inline=False)
 
         return menu_embed
 
@@ -47,8 +51,10 @@ class HelpMainMenu(ListPageSource):
             ))
         return await self.write_page(menu, categories)
 
+
 class HelpCogMenu(ListPageSource):
     """This is the menu for showing info about a cog or category"""
+
     def __init__(self, ctx, data, usage_formatter_func):
         super().__init__(data, per_page=10)
         self.ctx = ctx
@@ -67,7 +73,8 @@ class HelpCogMenu(ListPageSource):
                 """
             )
         )
-        menu_embed.set_thumbnail(url=self.ctx.guild.icon_url if self.ctx.guild else self.ctx.author.avatar_url)
+        menu_embed.set_thumbnail(
+            url=self.ctx.guild.icon_url if self.ctx.guild else self.ctx.author.avatar_url)
 
         menu_embed.set_footer(
             text=f"Showing {offset:,} - {min(len_data, offset+self.per_page-1):,} of {len_data:,} commands.",
@@ -75,7 +82,8 @@ class HelpCogMenu(ListPageSource):
         )
 
         for command in commands:
-            menu_embed.add_field(name=command[0], value=command[1], inline=False)
+            menu_embed.add_field(
+                name=command[0], value=command[1], inline=False)
 
         return menu_embed
 

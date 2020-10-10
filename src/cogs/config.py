@@ -228,6 +228,8 @@ class Config(commands.Cog, name='config'):
     )
     async def set_log_channel(self, ctx, channel: commands.TextChannelConverter):
         """**You can set the logging channel using this command.**
+        **Args**:
+        - `channel`: The channel you want to be set as a log channel.
         **Examples**: ```bash
         +set log_channel #logs
         +set lc #log-channel
@@ -247,6 +249,8 @@ class Config(commands.Cog, name='config'):
     )
     async def set_prefix(self, ctx, prefix):
         """**You can set the bot prefix using this command.**
+        **Args**:
+        - `prefix`: The prefix you want to set.
         **Examples**: ```bash
         +set prefix !
         +set prefix +

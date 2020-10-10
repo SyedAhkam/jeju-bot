@@ -239,7 +239,7 @@ class ErrorHandler(commands.Cog):
             embed = error_embed(
                 ctx,
                 error_name='Command On Cooldown',
-                error_msg=f'Sorry, This command is on a cooldown.\nPlease wait {round(error.retry_after, 1)} more seconds before retrying.'
+                error_msg=f'Sorry, This command is on a cooldown.\nPlease wait `{round(error.retry_after, 1)}` more seconds before retrying.'
             )
             await ctx.send(embed=embed)
             return

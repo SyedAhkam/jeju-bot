@@ -1,6 +1,6 @@
 from discord.ext import commands
 from utils.embeds import list_commands_under_group, error_embed, normal_embed
-from utils.db import set_config_value, is_config_value_set, get_config_value, update_config_value, delete_config_value
+from utils.db import set_config_value, is_config_value_set, get_config_value, update_config_value, delete_config_value, set_custom_prefix
 from exceptions import AdminPermsRequiredError
 
 
@@ -10,6 +10,7 @@ class Config(commands.Cog, name='config'):
     def __init__(self, bot):
         self.bot = bot
         self.config_collection = bot.db.config
+        self.guilds_collection = bot.db.guilds
         self.cd_mapping = commands.CooldownMapping.from_cooldown(
             1,
             7,
@@ -239,6 +240,31 @@ class Config(commands.Cog, name='config'):
             channel.id,
             f'Successfully set `{channel.name}` as a logging channel.\nMake sure the bot has permissions to create and send webhooks in that channel.'
         )
+
+    @_set.command(
+        name='prefix',
+        brief='Set the prefix to be used by the bot.'
+    )
+    async def set_prefix(self, ctx, prefix):
+        """**You can set the bot prefix using this command.**
+        **Examples**: ```bash
+        +set prefix !
+        +set prefix +
+        +set prefix j!
+        ```
+        """
+        await set_custom_prefix(
+            self.guilds_collection,
+            ctx.guild.id,
+            prefix
+        )
+
+        embed = normal_embed(
+            ctx,
+            title='Set prefix',
+            description=f'Successfully set `{prefix}` as the bot prefix.\nYou can change it back later.'
+        )
+        await ctx.send(embed=embed)
 
 
 def setup(bot):

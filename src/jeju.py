@@ -9,6 +9,14 @@ import logging
 import os
 import discord
 import aiohttp
+import asyncio
+
+# Uvloop
+try:
+    import uvloop
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+except ImportError:
+    pass
 
 # Setup logging
 discord_logger = logging.getLogger('discord')

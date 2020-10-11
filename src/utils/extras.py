@@ -27,7 +27,7 @@ async def send_webhook(url, session, *args, **kwargs):
     await webhook.send(*args, **kwargs)
 
 
-async def ask__yes_or_no_question(ctx, bot, embed_title, question, deny_message, timeout_message):
+async def ask_yes_or_no_question(ctx, bot, embed_title, question, deny_message, timeout_message):
     """Ask a yes or no question using the wait_for feature."""
     def check(msg):
         return msg.content.lower().split()[0] in ['yes', 'no', 'y', 'n'] and msg.channel == ctx.channel and msg.author == ctx.author

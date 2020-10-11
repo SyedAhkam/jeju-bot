@@ -25,7 +25,10 @@ class Config(commands.Cog, name='config'):
         bucket = self.cd_mapping.get_bucket(ctx.message)
         retry_after = bucket.update_rate_limit()
         if retry_after:
-            raise commands.CommandOnCooldown(self.cd_mapping, retry_after)
+            # BUG: may create more issues in the future
+            if ctx.invoked_with in ['help', 'h']:
+                return True
+            raise commands.CommandOnCooldown(bucket, retry_after)
         return True
 
     async def _enable_guild_feature(self, ctx, config_type, success_msg):

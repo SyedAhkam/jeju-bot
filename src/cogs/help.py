@@ -1,8 +1,7 @@
 from discord.ext import commands
-from discord.ext.menus import MenuPages, ListPageSource
+from discord.ext.menus import MenuPages
 from utils.embeds import normal_embed, error_embed
 from menus.help import HelpMainMenu, HelpCogMenu
-from inspect import cleandoc
 
 
 class Help(commands.Cog):

@@ -17,11 +17,6 @@ class Events(commands.Cog):
             f'Command: {ctx.command.name} invoked by the user {ctx.author.name} in {location}')
 
     @commands.Cog.listener()
-    async def on_ready(self):
-        """On ready event, very helpful."""
-        bot_logger.info(f'{self.bot.user.name} connected to discord!')
-
-    @commands.Cog.listener()
     async def on_guild_join(self, guild):
         """Notify the guild owner on joining a new server and saving guild in db."""
         app_info = await self.bot.application_info()

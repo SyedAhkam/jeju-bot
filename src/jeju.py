@@ -64,6 +64,7 @@ class Jeju(commands.Bot):
         self.db = self.motor_client.jeju_dev if self.is_env_dev() else self.motor_client.jeju
         self.start_time = datetime.now()
         self.aio_session = aiohttp.ClientSession()
+        self.loop.create_task(self.startup())
 
     @staticmethod
     def is_env_dev():
@@ -73,6 +74,19 @@ class Jeju(commands.Bot):
             return env.lower() == 'true'
         return env
 
+    async def startup(self):
+        """This function runs on startup. Used for loading cogs."""
+        await self.wait_until_ready()
+        ignored_cogs = ('eval')
+        for filename in os.listdir('./cogs'):
+            if filename.endswith('.py'):
+                if filename[:-3] in ignored_cogs:
+                    continue
+                self.load_extension(f'cogs.{filename[:-3]}')
+                bot_logger.info(f'Loaded cog: {filename}')
+
+        bot_logger.info(f'{self.user.name} connected to discord!')
+
 
 if __name__ == '__main__':
     # Initialize the bot
@@ -80,15 +94,6 @@ if __name__ == '__main__':
 
     if bot.is_env_dev():
         bot_logger.warning('Running in Development mode.')
-
-    # Load cogs from cogs directory
-    ignored_cogs = ('eval')
-    for filename in os.listdir('./cogs'):
-        if filename.endswith('.py'):
-            if filename[:-3] in ignored_cogs:
-                continue
-            bot.load_extension(f'cogs.{filename[:-3]}')
-            bot_logger.info(f'Loaded cog: {filename}')
 
     if bot.is_env_dev():
         DISCORD_TOKEN = os.getenv('DISCORD_TOKEN_DEV')

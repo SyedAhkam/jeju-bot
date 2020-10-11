@@ -3,7 +3,6 @@ from utils.embeds import normal_embed
 from discord import Webhook, AsyncWebhookAdapter
 
 import asyncio
-import json
 
 
 async def fetch_json(url, session):

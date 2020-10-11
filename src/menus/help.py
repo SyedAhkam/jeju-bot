@@ -1,4 +1,4 @@
-from discord.ext.menus import MenuPages, ListPageSource
+from discord.ext.menus import ListPageSource
 from utils.embeds import normal_embed
 from inspect import cleandoc
 

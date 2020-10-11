@@ -18,6 +18,18 @@ class Help(commands.Cog):
             'Jishaku',
             'Logging'
         ]
+        self.cd_mapping = commands.CooldownMapping.from_cooldown(
+            3,
+            2,
+            commands.BucketType.member
+        )
+
+    async def cog_check(self, ctx):
+        bucket = self.cd_mapping.get_bucket(ctx.message)
+        retry_after = bucket.update_rate_limit()
+        if retry_after:
+            raise commands.CommandOnCooldown(self.cd_mapping, retry_after)
+        return True
 
     @staticmethod
     def format_command_usage(ctx, command):

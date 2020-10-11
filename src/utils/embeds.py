@@ -20,6 +20,19 @@ def normal_embed(ctx, title=Embed.Empty, description=Embed.Empty):
     return embed
 
 
+def normal_embed_using_message(message, bot, title=Embed.Empty, description=Embed.Empty):
+    """Similar to normal_embed but for use when ctx is not available."""
+    embed = Embed(
+        description=description,
+        color=colors['normal'],
+        timestamp=datetime.utcnow()
+    )
+    embed.set_author(name=title, icon_url=bot.user.avatar_url)
+    embed.set_footer(text=message.author.name,
+                     icon_url=message.author.avatar_url)
+    return embed
+
+
 def error_embed(ctx, error_name=Embed.Empty, error_msg=Embed.Empty):
     """An embed for use when handling errors"""
     embed = Embed(

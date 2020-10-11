@@ -17,7 +17,7 @@ class Info(commands.Cog, name='info'):
         bucket = self.cd_mapping.get_bucket(ctx.message)
         retry_after = bucket.update_rate_limit()
         if retry_after:
-            raise commands.CommandOnCooldown(self.cd_mapping, retry_after)
+            raise commands.CommandOnCooldown(bucket, retry_after)
         return True
 
     @commands.command(

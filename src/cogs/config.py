@@ -245,6 +245,94 @@ class Config(commands.Cog, name='config'):
             channel.id,
             f'Successfully set `{channel.name}` as a logging channel.\nMake sure the bot has permissions to create and send webhooks in that channel.'
         )
+    
+    @_set.command(
+        name='message_log_channel',
+        aliases=['mlc'],
+        brief='Set the log channel to be used for logging events related to messages.'
+    )
+    async def set_message_log_channel(self, ctx, channel: commands.TextChannelConverter):
+        """**You can set the message logging channel using this command.**
+        **Args**:
+        - `channel`: The channel you want to be set as a message log channel.
+        **Examples**: ```bash
+        +set message_log_channel #message-logs
+        +set mlc #message-log-channel
+        +set log_channel 757236604690628609
+        ```
+        """
+        await self._set_config_value(
+            ctx,
+            'message_log_channel',
+            channel.id,
+            f'Successfully set `{channel.name}` as a message logging channel.\nMake sure the bot has permissions to create and send webhooks in that channel.'
+        )
+    
+    @_set.command(
+        name='server_log_channel',
+        aliases=['slc'],
+        brief='Set the log channel to be used for logging events related to the server/guild.'
+    )
+    async def set_server_log_channel(self, ctx, channel: commands.TextChannelConverter):
+        """**You can set the server logging channel using this command.**
+        **Args**:
+        - `channel`: The channel you want to be set as a server log channel.
+        **Examples**: ```bash
+        +set server_log_channel #server-logs
+        +set slc #server-log-channel
+        +set server_log_channel 757236604690628609
+        ```
+        """
+        await self._set_config_value(
+            ctx,
+            'server_log_channel',
+            channel.id,
+            f'Successfully set `{channel.name}` as a server logging channel.\nMake sure the bot has permissions to create and send webhooks in that channel.'
+        )
+
+    @_set.command(
+        name='join_leave_log_channel',
+        aliases=['jllc'],
+        brief='Set the log channel to be used for logging join/leave events.'
+    )
+    async def set_join_leave_log_channel(self, ctx, channel: commands.TextChannelConverter):
+        """**You can set the join/leave logging channel using this command.**
+        **Args**:
+        - `channel`: The channel you want to be set as a join/leave log channel.
+        **Examples**: ```bash
+        +set join_leave_log_channel #join-leave-logs
+        +set jllc #join-leave-log-channel
+        +set join_leave_log_channel 757236604690628609
+        ```
+        """
+        await self._set_config_value(
+            ctx,
+            'join_leave_log_channel',
+            channel.id,
+            f'Successfully set `{channel.name}` as a join/leave logging channel.\nMake sure the bot has permissions to create and send webhooks in that channel.'
+        )
+    
+    @_set.command(
+        name='people_log_channel',
+        aliases=['plc'],
+        brief='Set the log channel to be used for logging people/member events.'
+    )
+    async def set_member_log_channel(self, ctx, channel: commands.TextChannelConverter):
+        """**You can set the people logging channel using this command.**
+        **Args**:
+        - `channel`: The channel you want to be set as a people log channel.
+        **Examples**: ```bash
+        +set people_log_channel #people-logs
+        +set plc #member-log-channel
+        +set people_log_channel 757236604690628609
+        ```
+        """
+        await self._set_config_value(
+            ctx,
+            'people_log_channel',
+            channel.id,
+            f'Successfully set `{channel.name}` as a people logging channel.\nMake sure the bot has permissions to create and send webhooks in that channel.'
+        )
 
     @_set.command(
         name='prefix',

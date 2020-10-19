@@ -6,6 +6,7 @@ from utils.embeds import log_embed_danger, log_embed_warn, log_embed_info
 import textwrap
 import ago
 
+# message logs, member logs, server logs, welcome logs
 
 class Logging(commands.Cog):
     """Everything related to logging."""
@@ -13,8 +14,8 @@ class Logging(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.config_collection = bot.db.config
-
-    async def _get_webhook(self, guild):
+    
+    async def _get_log_channel(self, guild, log_type):
         is_logging_enabled = await get_config_value(
             self.config_collection,
             guild.id,
@@ -23,14 +24,27 @@ class Logging(commands.Cog):
         if not is_logging_enabled:
             return None
 
-        logging_channel_id = await get_config_value(
+        #try to get channel by type
+        logging_channel_by_type_id = await get_config_value(
             self.config_collection,
             guild.id,
-            'log_channel'
+            log_type + '_channel'
         )
-        if not logging_channel_id:
-            return None
-        logging_channel_obj = guild.get_channel(logging_channel_id)
+        #else fallback to default log_channel
+        if not logging_channel_by_type_id:
+            logging_channel_default_id = await get_config_value(
+                self.config_collection,
+                guild.id,
+                'log_channel'
+            )
+        
+            return guild.get_channel(logging_channel_default_id)
+        
+        return guild.get_channel(logging_channel_by_type_id)
+
+
+    async def _get_webhook(self, guild, log_type):
+        logging_channel_obj = await self._get_log_channel(guild, log_type)
 
         all_webhooks = await logging_channel_obj.webhooks()
         if not all_webhooks:
@@ -62,7 +76,7 @@ class Logging(commands.Cog):
         if not message.content:
             return
 
-        webhook = await self._get_webhook(message.guild)
+        webhook = await self._get_webhook(message.guild, 'message_log')
         if not webhook:
             return
 
@@ -86,7 +100,7 @@ class Logging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_bulk_message_delete(self, messages):
-        webhook = await self._get_webhook(messages[0].guild)
+        webhook = await self._get_webhook(messages[0].guild, 'message_log')
         if not webhook:
             return
 
@@ -115,7 +129,7 @@ class Logging(commands.Cog):
     @commands.Cog.listener()
     async def on_message_edit(self, message_before, message_after):
         if not (message_before.content == message_after.content):
-            webhook = await self._get_webhook(message_after.guild)
+            webhook = await self._get_webhook(message_after.guild, 'message_log')
             if not webhook:
                 return
 
@@ -139,7 +153,7 @@ class Logging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel):
-        webhook = await self._get_webhook(channel.guild)
+        webhook = await self._get_webhook(channel.guild, 'server_log')
         if not webhook:
             return
 
@@ -161,7 +175,7 @@ class Logging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_channel_create(self, channel):
-        webhook = await self._get_webhook(channel.guild)
+        webhook = await self._get_webhook(channel.guild, 'server_log')
         if not webhook:
             return
 
@@ -183,7 +197,7 @@ class Logging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_channel_update(self, channel_before, channel_after):
-        webhook = await self._get_webhook(channel_after.guild)
+        webhook = await self._get_webhook(channel_after.guild, 'server_log')
         if not webhook:
             return
 
@@ -242,7 +256,7 @@ class Logging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        webhook = await self._get_webhook(member.guild)
+        webhook = await self._get_webhook(member.guild, 'join_leave_log')
         if not webhook:
             return
 
@@ -267,7 +281,7 @@ class Logging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
-        webhook = await self._get_webhook(member.guild)
+        webhook = await self._get_webhook(member.guild, 'join_leave_log')
         if not webhook:
             return
 
@@ -294,7 +308,7 @@ class Logging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_update(self, member_before, member_after):
-        webhook = await self._get_webhook(member_after.guild)
+        webhook = await self._get_webhook(member_after.guild, 'people_log')
         if not webhook:
             return
 
@@ -369,7 +383,7 @@ class Logging(commands.Cog):
 
         webhooks = []
         for guild in guilds_which_user_shares:
-            webhook = await self._get_webhook(guild)
+            webhook = await self._get_webhook(guild, 'people_log')
             if not webhook:
                 continue
 
@@ -440,7 +454,7 @@ class Logging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_update(self, guild_before, guild_after):
-        webhook = await self._get_webhook(guild_after)
+        webhook = await self._get_webhook(guild_after, 'server_log')
         if not webhook:
             return
 
@@ -542,7 +556,7 @@ class Logging(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_role_create(self, role):
         guild = role.guild
-        webhook = await self._get_webhook(guild)
+        webhook = await self._get_webhook(guild, 'server_log')
         if not webhook:
             return
 
@@ -568,7 +582,7 @@ class Logging(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_role_delete(self, role):
         guild = role.guild
-        webhook = await self._get_webhook(guild)
+        webhook = await self._get_webhook(guild, 'server_log')
         if not webhook:
             return
 
@@ -594,7 +608,7 @@ class Logging(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_role_update(self, role_before, role_after):
         guild = role_after.guild
-        webhook = await self._get_webhook(guild)
+        webhook = await self._get_webhook(guild, 'server_log')
         if not webhook:
             return
 
@@ -682,7 +696,7 @@ class Logging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_emojis_update(self, guild, emojis_before, emojis_after):
-        webhook = await self._get_webhook(guild)
+        webhook = await self._get_webhook(guild, 'server_log')
         if not webhook:
             return
 
@@ -728,7 +742,7 @@ class Logging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_ban(self, guild, member_or_user):
-        webhook = await self._get_webhook(guild)
+        webhook = await self._get_webhook(guild, 'people_log')
         if not webhook:
             return
 
@@ -752,7 +766,7 @@ class Logging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_unban(self, guild, user):
-        webhook = await self._get_webhook(guild)
+        webhook = await self._get_webhook(guild, 'people_log')
         if not webhook:
             return
 

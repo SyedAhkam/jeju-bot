@@ -22,8 +22,8 @@ Please use [this](https://discord.com/oauth2/authorize?client_id=699595477934538
         $ cd jeju-bot
     ```
 3. Create `.env` file and set these env variables:
-    * DISCORD_TOKEN
-    * MONGODB_URI
+    * `DISCORD_TOKEN`
+    * `MONGODB_URI`
 4. Initialize pipenv and Install dependencies:
     ```sh
         $ pipenv install

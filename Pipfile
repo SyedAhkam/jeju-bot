@@ -18,6 +18,7 @@ discord-ext-menus = {git = "https://github.com/Rapptz/discord-ext-menus"}
 jikanpy = "*"
 motor = "*"
 jishaku = "*"
+dnspython = "*"
 
 [requires]
 python_version = "3.8"

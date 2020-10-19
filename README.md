@@ -9,7 +9,7 @@
 A multipurpose discord bot made using [discord.py](https://github.com/Rapptz/discord.py) library focused on simplicity.
 
 # Invite
-Please use [this](https://discord.com/oauth2/authorize?client_id=699595477934538782&permissions=8&scope=bot) link to invite the instance hosted by me.
+Please use [this](https://discord.com/oauth2/authorize?client_id=699595477934538782&permissions=388166&authorize&scope=bot) link to invite the instance hosted by me.
 
 ## Features
 1. Easy to use.

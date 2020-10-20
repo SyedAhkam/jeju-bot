@@ -35,21 +35,12 @@ intents = discord.Intents.default()
 intents.members = True
 
 
-async def get_prefix(bot, message):
-    """Get custom prefix depending whether they are in a guild or not."""
-    default_prefix = '++' if bot.is_env_dev() else '+'
-    if message.guild:
-        custom_prefix = await get_custom_prefix(bot.db.guilds, message.guild.id)
-        return commands.when_mentioned_or(custom_prefix)(bot, message)
-    return commands.when_mentioned_or(default_prefix)(bot, message)
-
-
 class Jeju(commands.Bot):
     """Subclassing bot for more control."""
 
     def __init__(self):
         super().__init__(
-            command_prefix=get_prefix,
+            command_prefix=self.get_prefix,
             case_insensitive=True,
             help_command=None,
             activity=discord.Activity(
@@ -65,6 +56,15 @@ class Jeju(commands.Bot):
         self.start_time = datetime.now()
         self.aio_session = aiohttp.ClientSession()
         self.loop.create_task(self.startup())
+
+    async def get_prefix(self, message):
+        """Get custom prefix depending whether they are in a guild or not."""
+        default_prefix = '++' if self.is_env_dev() else '+'
+        if message.guild:
+            custom_prefix = await get_custom_prefix(self.db.guilds, message.guild.id)
+            return commands.when_mentioned_or(custom_prefix)(self, message)
+        return commands.when_mentioned_or(default_prefix)(self, message)
+
 
     @staticmethod
     def is_env_dev():

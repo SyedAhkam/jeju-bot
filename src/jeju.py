@@ -54,7 +54,6 @@ class Jeju(commands.Bot):
         )
         self.db = self.motor_client.jeju_dev if self.is_env_dev() else self.motor_client.jeju
         self.start_time = datetime.now()
-        self.aio_session = aiohttp.ClientSession()
         self.loop.create_task(self.startup())
 
     async def get_prefix(self, message):
@@ -86,6 +85,9 @@ class Jeju(commands.Bot):
                 bot_logger.info(f'Loaded cog: {filename}')
 
         bot_logger.info(f'{self.user.name} connected to discord!')
+
+        # Had to put this here because of the deprecation warning
+        self.aio_session = aiohttp.ClientSession()
 
 
 if __name__ == '__main__':

@@ -75,6 +75,9 @@ class Logging(commands.Cog):
 
         if not message.content:
             return
+        
+        if message.author.bot:
+            return
 
         webhook = await self._get_webhook(message.guild, 'message_log')
         if not webhook:
@@ -104,6 +107,9 @@ class Logging(commands.Cog):
         if not webhook:
             return
 
+        if messages[0].author.bot:
+            return
+
         available_space_per_message = 2048 / len(messages)
         description = ''
         for message in messages:
@@ -131,6 +137,9 @@ class Logging(commands.Cog):
         if not (message_before.content == message_after.content):
             webhook = await self._get_webhook(message_after.guild, 'message_log')
             if not webhook:
+                return
+
+            if message_after.author.bot:
                 return
 
             embed = log_embed_warn(

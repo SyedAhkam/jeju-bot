@@ -15,7 +15,8 @@ class Help(commands.Cog):
             'Eval',
             'BotCheck',
             'Jishaku',
-            'Logging'
+            'Logging',
+            'JoinLeave'
         ]
         self.cd_mapping = commands.CooldownMapping.from_cooldown(
             3,

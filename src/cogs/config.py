@@ -11,6 +11,7 @@ class Config(commands.Cog, name='config'):
         self.bot = bot
         self.config_collection = bot.db.config
         self.guilds_collection = bot.db.guilds
+        self.auto_roles_collection = bot.db.auto_roles
         self.cd_mapping = commands.CooldownMapping.from_cooldown(
             1,
             7,
@@ -189,6 +190,22 @@ class Config(commands.Cog, name='config'):
         """
         embed = list_commands_under_group(ctx, self._set)
         await ctx.send(embed=embed)
+    
+    @commands.group(
+        name='add',
+        brief='Add some configuration values for a specific feature.',
+        invoke_without_command=True
+    )
+    async def _add(self, ctx):
+        """**You can add certain values to use in other features of the bot using this command.**
+        **Tip**: You can do just `+add` to see all the available values.
+        **Examples**: ```bash
+        +add
+        +add auto_roles @newbie
+        ```
+        """
+        embed = list_commands_under_group(ctx, self._add)
+        await ctx.send(embed=embed)
 
     @_enable.command(
         name='logging',
@@ -222,6 +239,44 @@ class Config(commands.Cog, name='config'):
             ctx,
             'is_logging_enabled',
             'Successfully disabled logging in this guild/server.\nYou can use the `enable` command to enable it again.'
+        )
+    
+    @_enable.command(
+        name='auto_roles',
+        aliases=['ar'],
+        brief='Enable the auto_roles feature of the bot.'
+    )
+    async def enable_auto_roles(self, ctx):
+        """**You can enable the auto roles feature of the bot using this command.**
+        **Examples**: ```bash
+        +enable auto_roles
+        +enable ar
+        ```
+        """
+        await self._enable_guild_feature(
+            ctx,
+            'is_auto_roles_enabled',
+            'Successfully enabled auto roles in this guild/server.\nMake sure bot has the necessary permissions for the same also add roles using the `add` command.'
+        )
+
+    @_disable.command(
+        name='auto_roles',
+        aliases=['ar'],
+        brief='Disable the auto_roles feature of the bot.'
+    )
+    async def disable_auto_roles(self, ctx):
+        """**You can disable the auto roles feature of the bot using this command.**
+        **Examples**: ```bash
+        +disable auto_roles
+        +disable ar
+        ```
+        """
+        #TODO: delete leftover roles
+
+        await self._disable_guild_feature(
+            ctx,
+            'is_auto_roles_enabled',
+            'Successfully disabled auto roles in this guild/server.\nYou can use the `enable` command to enable it again.'
         )
 
     @_set.command(
@@ -361,6 +416,37 @@ class Config(commands.Cog, name='config'):
         )
         await ctx.send(embed=embed)
 
+    @_add.command(
+        name='auto_roles',
+        aliases=['ar'],
+        brief='Add roles to be added to a member on join.'
+    )
+    async def add_auto_roles(self, ctx, roles: commands.Greedy[commands.RoleConverter]):
+        """**You can add the roles for auto roles feature using this command.**
+        **Args**:
+        - `roles`: The roles you want to add.
+        **Examples**: ```bash
+        +add auto_roles @newbie @members
+        +add auto_roles 741364951356276810
+        +add ar 741364951356276810
+        ```
+        """
+        if not roles:
+            await ctx.send('Please provide atleast one role.')
+            return
+
+        for role in roles:
+            await self.auto_roles_collection.insert_one({
+                '_id': role.id,
+                'guild_id': ctx.guild.id
+            })
+        
+        embed = normal_embed(
+            ctx,
+            title='Done',
+            description=f'Successfully added `{len(roles)}` roles for auto roles.'
+        )
+        await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Config(bot))

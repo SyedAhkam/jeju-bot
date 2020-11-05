@@ -5,6 +5,7 @@ from utils.embeds import log_embed_danger, log_embed_warn, log_embed_info
 
 import textwrap
 import ago
+import re
 
 # message logs, member logs, server logs, welcome logs
 
@@ -14,6 +15,7 @@ class Logging(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.config_collection = bot.db.config
+        self.invite_regex = 'https:\/\/discord.gg\/[a-zA-Z0-9]+'
     
     async def _get_log_channel(self, guild, log_type):
         is_logging_enabled = await get_config_value(
@@ -67,6 +69,48 @@ class Logging(commands.Cog):
             reason='Jeju bot logging'
         )
         return webhook
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.author == self.bot.user:
+            return
+
+        invite_matches =  re.findall(self.invite_regex, message.content)
+        if invite_matches:
+            invite_matches = list(dict.fromkeys(invite_matches)) # to remove duplicates
+
+            for invite_match in invite_matches:
+                try:
+                    invite = await self.bot.fetch_invite(invite_match)
+                except:
+                    return
+                
+                webhook = await self._get_webhook(message.guild, 'message_log')
+                if not webhook:
+                    return
+
+                embed = log_embed_warn(
+                    'Invite link detected',
+                    self.bot
+                )
+                embed.add_field(name='ID:', value=invite.id, inline=True)
+                embed.add_field(name='Guild:',
+                                value=invite.guild.name, inline=True)
+                embed.add_field(name='Inviter:', value=invite.inviter, inline=True)
+                embed.add_field(name='Members:', value=invite.approximate_member_count)
+
+                embed.add_field(name='URL', value=invite.url)
+
+                embed.set_footer(
+                    text=f'Channel: {message.channel.name}', icon_url=message.author.avatar_url)
+
+                embed.set_thumbnail(url=invite.guild.icon_url)
+
+                await send_webhook(
+                    webhook.url,
+                    self.bot.aio_session,
+                    embed=embed
+                )
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):

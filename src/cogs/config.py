@@ -388,6 +388,28 @@ class Config(commands.Cog, name='config'):
             channel.id,
             f'Successfully set `{channel.name}` as a people logging channel.\nMake sure the bot has permissions to create and send webhooks in that channel.'
         )
+    
+    @_set.command(
+        name='invite_log_channel',
+        aliases=['ilc'],
+        brief='Set the log channel to be used for logging invite related events.'
+    )
+    async def set_invite_log_channel(self, ctx, channel: commands.TextChannelConverter):
+        """**You can set the invite logging channel using this command.**
+        **Args**:
+        - `channel`: The channel you want to be set as a invite log channel.
+        **Examples**: ```bash
+        +set invite_log_channel #invite-logs
+        +set ilc #invite-log-channel
+        +set invite_log_channel 757236604690628609
+        ```
+        """
+        await self._set_config_value(
+            ctx,
+            'invite_log_channel',
+            channel.id,
+            f'Successfully set `{channel.name}` as a invite logging channel.\nMake sure the bot has permissions to create and send webhooks in that channel.'
+        )
 
     @_set.command(
         name='prefix',

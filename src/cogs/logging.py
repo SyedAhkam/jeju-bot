@@ -7,7 +7,7 @@ import textwrap
 import ago
 import re
 
-# message logs, member logs, server logs, welcome logs
+# message logs, member logs, server logs, welcome logs, invite logs
 
 class Logging(commands.Cog):
     """Everything related to logging."""
@@ -15,6 +15,7 @@ class Logging(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.config_collection = bot.db.config
+        self.invites_collection = bot.db.invites
         self.invite_regex = 'https:\/\/discord.gg\/[a-zA-Z0-9]+'
     
     async def _get_log_channel(self, guild, log_type):
@@ -69,6 +70,26 @@ class Logging(commands.Cog):
             reason='Jeju bot logging'
         )
         return webhook
+
+    async def _get_invite(self, guild):
+        old_invites_docs = await self.invites_collection.find({'guild_id': guild.id}).to_list(None)
+        if not old_invites_docs:
+            return
+        
+        current_invites = await guild.invites()
+
+        for old_invite_doc in old_invites_docs:
+            current_invite = [invite for invite in current_invites if invite.id == old_invite_doc['_id']]
+            if not current_invite: # invite got deleted 
+                await self.invites_collection.delete_one({'_id': old_invite_doc['_id']})
+                continue
+
+            if old_invite_doc['uses'] < current_invite[0].uses:
+                await self.invites_collection.update_one(
+                    {'_id': current_invite[0].id},
+                    {'$set': {'uses': current_invite[0].uses}}
+                    )
+                return current_invite[0]
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -309,27 +330,58 @@ class Logging(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        webhook = await self._get_webhook(member.guild, 'join_leave_log')
-        if not webhook:
+        webhook_join = await self._get_webhook(member.guild, 'join_leave_log')
+        if not webhook_join:
             return
 
-        embed = log_embed_info(
+        join_embed = log_embed_info(
             'Member joined',
             self.bot
         )
-        embed.add_field(name='Name:', value=member.name, inline=True)
-        embed.add_field(name='Mention:', value=member.mention, inline=True)
-        embed.add_field(name='Joined Discord:', value=ago.human(
+        join_embed.add_field(name='Name:', value=member.name, inline=True)
+        join_embed.add_field(name='Mention:', value=member.mention, inline=True)
+        join_embed.add_field(name='Joined Discord:', value=ago.human(
             member.created_at), inline=True)
 
-        embed.set_footer(
+        join_embed.set_footer(
             text=f'Member ID: {member.id}', icon_url=member.avatar_url)
-        embed.set_thumbnail(url=member.avatar_url)
+        join_embed.set_thumbnail(url=member.avatar_url)
 
         await send_webhook(
-            webhook.url,
+            webhook_join.url,
             self.bot.aio_session,
-            embed=embed
+            embed=join_embed
+        )
+
+        webhook_invites = await self._get_webhook(member.guild, 'invite_log')
+        if not webhook_invites:
+            return
+        
+        invite = await self._get_invite(member.guild)
+
+        invite_embed = log_embed_info(
+            'Member joined using invite link',
+            self.bot,
+        )
+
+        if not invite:
+            invite_embed.description = 'Sorry, I couldn\'t figure out how this person joined.'
+
+        else:
+            invite_embed.add_field(name='Name:', value=member.name, inline=True)
+            invite_embed.add_field(name='ID:', value=invite.id, inline=True)
+            invite_embed.add_field(name='Guild:', value=invite.guild.name, inline=True)
+            invite_embed.add_field(name='Inviter:', value=invite.inviter.name, inline=True)
+
+            invite_embed.add_field(name='URL', value=invite.url, inline=True)
+        
+        invite_embed.set_thumbnail(url=member.avatar_url)
+        invite_embed.set_footer(text=f'User ID: {member.id}', icon_url=member.avatar_url)
+
+        await send_webhook(
+            webhook_invites.url,
+            self.bot.aio_session,
+            embed=invite_embed
         )
 
     @commands.Cog.listener()
@@ -839,6 +891,67 @@ class Logging(commands.Cog):
             embed=embed
         )
 
+    @commands.Cog.listener()
+    async def on_invite_create(self, invite):
+        await self.invites_collection.insert_one({
+            '_id': invite.id,
+            'guild_id': invite.guild.id,
+            'uses': invite.uses,
+            'inviter': invite.inviter.name
+        })
+
+        webhook = await self._get_webhook(invite.guild, 'invite_log')
+        if not webhook:
+            return
+
+        embed = log_embed_info(
+            'Invite Created',
+            self.bot
+        )
+        embed.add_field(name='ID:', value=invite.id, inline=True)
+        embed.add_field(name='Guild:',
+                        value=invite.guild.name, inline=True)
+        embed.add_field(name='Inviter:', value=invite.inviter, inline=True)
+
+        embed.add_field(name='URL', value=invite.url)
+
+        embed.set_footer(
+            text=f'Channel ID: {invite.channel.id}', icon_url=invite.inviter.avatar_url)
+        embed.set_thumbnail(url=invite.guild.icon_url)
+
+        await send_webhook(
+            webhook.url,
+            self.bot.aio_session,
+            embed=embed
+        )
+
+    @commands.Cog.listener()
+    async def on_invite_delete(self, invite):
+        await self.invites_collection.delete_one({'_id': invite.id})
+
+        webhook = await self._get_webhook(invite.guild, 'invite_log')
+        if not webhook:
+            return
+
+        embed = log_embed_danger(
+            'Invite Deleted',
+            self.bot
+        )
+        embed.add_field(name='ID:', value=invite.id, inline=True)
+        embed.add_field(name='Guild:',
+                        value=invite.guild.name, inline=True)
+
+        embed.add_field(name='URL', value=invite.url)
+
+        embed.set_footer(
+            text=f'Channel ID: {invite.channel.id}')
+        embed.set_thumbnail(url=invite.guild.icon_url)
+
+        await send_webhook(
+            webhook.url,
+            self.bot.aio_session,
+            embed=embed
+        )
 
 def setup(bot):
     bot.add_cog(Logging(bot))

@@ -390,6 +390,8 @@ class Logging(commands.Cog):
         if not webhook:
             return
 
+        roles = ', '.join([role.mention for role in member.roles][1:])
+
         embed = log_embed_danger(
             'Member left',
             self.bot
@@ -398,8 +400,7 @@ class Logging(commands.Cog):
         embed.add_field(name='Mention:', value=member.mention, inline=True)
         embed.add_field(name='Joined Discord:', value=ago.human(
             member.created_at), inline=True)
-        embed.add_field(name='Roles:', value=', '.join(
-            [role.mention for role in member.roles]), inline=False)
+        embed.add_field(name='Roles:', value=roles or 'No roles', inline=False)
 
         embed.set_footer(
             text=f'Member ID: {member.id}', icon_url=member.avatar_url)

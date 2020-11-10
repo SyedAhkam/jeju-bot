@@ -9,7 +9,7 @@
 A multipurpose discord bot made using [discord.py](https://github.com/Rapptz/discord.py) library focused on simplicity.
 
 # Invite
-Please use [this](https://discord.com/oauth2/authorize?client_id=699595477934538782&permissions=388166&authorize&scope=bot) link to invite the instance hosted by me.
+Please use [this](https://discord.com/oauth2/authorize?client_id=699595477934538782&permissions=2080763126&scope=bot) link to invite the instance hosted by me.
 
 ## Features
 1. Easy to use.
@@ -69,3 +69,7 @@ You can also set `DISCORD_TOKEN_BETA` environment variable and run the bot in DE
 ```sh
     $ DEV=True python3 jeju.py
 ```
+
+## Contact me
+
+My discord tag: SyedAhkam#6584

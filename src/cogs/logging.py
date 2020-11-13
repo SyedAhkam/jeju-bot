@@ -48,6 +48,8 @@ class Logging(commands.Cog):
 
     async def _get_webhook(self, guild, log_type):
         logging_channel_obj = await self._get_log_channel(guild, log_type)
+        if not logging_channel_obj:
+            return
 
         all_webhooks = await logging_channel_obj.webhooks()
         if not all_webhooks:

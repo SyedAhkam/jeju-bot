@@ -190,7 +190,7 @@ class Config(commands.Cog, name='config'):
         """
         embed = list_commands_under_group(ctx, self._set)
         await ctx.send(embed=embed)
-    
+
     @commands.group(
         name='add',
         brief='Add some configuration values for a specific feature.',
@@ -240,7 +240,7 @@ class Config(commands.Cog, name='config'):
             'is_logging_enabled',
             'Successfully disabled logging in this guild/server.\nYou can use the `enable` command to enable it again.'
         )
-    
+
     @_enable.command(
         name='auto_roles',
         aliases=['ar'],
@@ -271,7 +271,8 @@ class Config(commands.Cog, name='config'):
         +disable ar
         ```
         """
-        #TODO: delete leftover roles
+        #delete leftover roles
+        await self.auto_roles_collection.delete_many({'guild_id': ctx.guild.id})
 
         await self._disable_guild_feature(
             ctx,
@@ -300,7 +301,7 @@ class Config(commands.Cog, name='config'):
             channel.id,
             f'Successfully set `{channel.name}` as a logging channel.\nMake sure the bot has permissions to create and send webhooks in that channel.'
         )
-    
+
     @_set.command(
         name='message_log_channel',
         aliases=['mlc'],
@@ -322,7 +323,7 @@ class Config(commands.Cog, name='config'):
             channel.id,
             f'Successfully set `{channel.name}` as a message logging channel.\nMake sure the bot has permissions to create and send webhooks in that channel.'
         )
-    
+
     @_set.command(
         name='server_log_channel',
         aliases=['slc'],
@@ -366,7 +367,7 @@ class Config(commands.Cog, name='config'):
             channel.id,
             f'Successfully set `{channel.name}` as a join/leave logging channel.\nMake sure the bot has permissions to create and send webhooks in that channel.'
         )
-    
+
     @_set.command(
         name='people_log_channel',
         aliases=['plc'],
@@ -388,7 +389,7 @@ class Config(commands.Cog, name='config'):
             channel.id,
             f'Successfully set `{channel.name}` as a people logging channel.\nMake sure the bot has permissions to create and send webhooks in that channel.'
         )
-    
+
     @_set.command(
         name='invite_log_channel',
         aliases=['ilc'],
@@ -462,13 +463,14 @@ class Config(commands.Cog, name='config'):
                 '_id': role.id,
                 'guild_id': ctx.guild.id
             })
-        
+
         embed = normal_embed(
             ctx,
             title='Done',
             description=f'Successfully added `{len(roles)}` roles for auto roles.'
         )
         await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Config(bot))

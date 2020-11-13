@@ -9,6 +9,7 @@ import re
 
 # message logs, member logs, server logs, welcome logs, invite logs
 
+
 class Logging(commands.Cog):
     """Everything related to logging."""
 
@@ -17,7 +18,7 @@ class Logging(commands.Cog):
         self.config_collection = bot.db.config
         self.invites_collection = bot.db.invites
         self.invite_regex = 'https:\/\/discord.gg\/[a-zA-Z0-9]+'
-    
+
     async def _get_log_channel(self, guild, log_type):
         is_logging_enabled = await get_config_value(
             self.config_collection,
@@ -27,24 +28,23 @@ class Logging(commands.Cog):
         if not is_logging_enabled:
             return None
 
-        #try to get channel by type
+        # try to get channel by type
         logging_channel_by_type_id = await get_config_value(
             self.config_collection,
             guild.id,
             log_type + '_channel'
         )
-        #else fallback to default log_channel
+        # else fallback to default log_channel
         if not logging_channel_by_type_id:
             logging_channel_default_id = await get_config_value(
                 self.config_collection,
                 guild.id,
                 'log_channel'
             )
-        
-            return guild.get_channel(logging_channel_default_id)
-        
-        return guild.get_channel(logging_channel_by_type_id)
 
+            return guild.get_channel(logging_channel_default_id)
+
+        return guild.get_channel(logging_channel_by_type_id)
 
     async def _get_webhook(self, guild, log_type):
         logging_channel_obj = await self._get_log_channel(guild, log_type)
@@ -77,12 +77,13 @@ class Logging(commands.Cog):
         old_invites_docs = await self.invites_collection.find({'guild_id': guild.id}).to_list(None)
         if not old_invites_docs:
             return
-        
+
         current_invites = await guild.invites()
 
         for old_invite_doc in old_invites_docs:
-            current_invite = [invite for invite in current_invites if invite.id == old_invite_doc['_id']]
-            if not current_invite: # invite got deleted 
+            current_invite = [
+                invite for invite in current_invites if invite.id == old_invite_doc['_id']]
+            if not current_invite:  # invite got deleted
                 await self.invites_collection.delete_one({'_id': old_invite_doc['_id']})
                 continue
 
@@ -90,7 +91,7 @@ class Logging(commands.Cog):
                 await self.invites_collection.update_one(
                     {'_id': current_invite[0].id},
                     {'$set': {'uses': current_invite[0].uses}}
-                    )
+                )
                 return current_invite[0]
 
     @commands.Cog.listener()
@@ -98,16 +99,17 @@ class Logging(commands.Cog):
         if message.author == self.bot.user:
             return
 
-        invite_matches =  re.findall(self.invite_regex, message.content)
+        invite_matches = re.findall(self.invite_regex, message.content)
         if invite_matches:
-            invite_matches = list(dict.fromkeys(invite_matches)) # to remove duplicates
+            invite_matches = list(dict.fromkeys(
+                invite_matches))  # to remove duplicates
 
             for invite_match in invite_matches:
                 try:
                     invite = await self.bot.fetch_invite(invite_match)
                 except:
                     return
-                
+
                 webhook = await self._get_webhook(message.guild, 'message_log')
                 if not webhook:
                     return
@@ -119,8 +121,10 @@ class Logging(commands.Cog):
                 embed.add_field(name='ID:', value=invite.id, inline=True)
                 embed.add_field(name='Guild:',
                                 value=invite.guild.name, inline=True)
-                embed.add_field(name='Inviter:', value=invite.inviter, inline=True)
-                embed.add_field(name='Members:', value=invite.approximate_member_count)
+                embed.add_field(name='Inviter:',
+                                value=invite.inviter, inline=True)
+                embed.add_field(name='Members:',
+                                value=invite.approximate_member_count)
 
                 embed.add_field(name='URL', value=invite.url)
 
@@ -142,7 +146,7 @@ class Logging(commands.Cog):
 
         if not message.content:
             return
-        
+
         if message.author.bot:
             return
 
@@ -314,13 +318,63 @@ class Logging(commands.Cog):
 
                 return
             if not (channel_before.overwrites == channel_after.overwrites):
-                # TODO: list the perms modified
-
-                role_or_member = list(channel_after.overwrites)[0]
                 embed.add_field(
                     name='Name:', value=channel_before.name, inline=True)
-                embed.add_field(name='Permission overwrites updated:',
-                                value=f'Permission overwrites updated for `{role_or_member.name}`', inline=False)
+
+                overwrites_before = channel_before.overwrites
+                overwrites_after = channel_after.overwrites
+
+                ov_before_list_objs = list(overwrites_before.values())
+
+                new_ov = [
+                    ov for ov in overwrites_after if ov not in overwrites_before]
+                removed_ov = [
+                    ov for ov in overwrites_before if ov not in overwrites_after]
+
+                if new_ov:
+                    embed.add_field(
+                        name='Overwrites created', value=f'Permission overwrites created for `{new_ov[0]}`', inline=False)
+
+                elif removed_ov:
+                    embed.add_field(
+                        name='Overwrites removed', value=f'Permission overwrites removed for `{removed_ov[0]}`', inline=False)
+
+                else:
+                    role_or_member = None
+
+                    ov_modified_before = None
+                    ov_modified_after = None
+                    for i, ov in enumerate(overwrites_after.values()):
+                        if ov != ov_before_list_objs[i]:
+                            ov_modified_before = ov_before_list_objs[i]
+                            ov_modified_after = ov
+                            role_or_member = list(overwrites_after)[i]
+
+                    old_perms = list(iter(ov_modified_before))
+                    new_perms = list(iter(ov_modified_after))
+
+                    changed_perms = []
+                    for i, perm in enumerate(new_perms):
+                        if perm != old_perms[i]:
+                            changed_perms.append(perm)
+
+                    changed_perms_string = ''
+                    for perm in changed_perms:
+                        to_be_added = f'`{perm[0]}`: '
+                        if perm[1] is None:
+                            to_be_added += 'Overwrites removed'
+                        else:
+                            to_be_added += 'Allowed' if perm[1] else 'Denied'
+
+                        to_be_added += '\n'
+
+                        changed_perms_string += to_be_added
+
+                    embed.add_field(name='Permission overwrites updated:',
+                                    value=f'Permission overwrites updated for `{role_or_member.name}`', inline=False)
+
+                    embed.add_field(name='Changes:',
+                                    value=changed_perms_string, inline=False)
 
                 embed.set_footer(text=f'Channel ID: {channel_after.id}')
 
@@ -341,7 +395,8 @@ class Logging(commands.Cog):
             self.bot
         )
         join_embed.add_field(name='Name:', value=member.name, inline=True)
-        join_embed.add_field(name='Mention:', value=member.mention, inline=True)
+        join_embed.add_field(
+            name='Mention:', value=member.mention, inline=True)
         join_embed.add_field(name='Joined Discord:', value=ago.human(
             member.created_at), inline=True)
 
@@ -358,7 +413,7 @@ class Logging(commands.Cog):
         webhook_invites = await self._get_webhook(member.guild, 'invite_log')
         if not webhook_invites:
             return
-        
+
         invite = await self._get_invite(member.guild)
 
         invite_embed = log_embed_info(
@@ -370,15 +425,19 @@ class Logging(commands.Cog):
             invite_embed.description = 'Sorry, I couldn\'t figure out how this person joined.'
 
         else:
-            invite_embed.add_field(name='Name:', value=member.name, inline=True)
+            invite_embed.add_field(
+                name='Name:', value=member.name, inline=True)
             invite_embed.add_field(name='ID:', value=invite.id, inline=True)
-            invite_embed.add_field(name='Guild:', value=invite.guild.name, inline=True)
-            invite_embed.add_field(name='Inviter:', value=invite.inviter.name, inline=True)
+            invite_embed.add_field(
+                name='Guild:', value=invite.guild.name, inline=True)
+            invite_embed.add_field(
+                name='Inviter:', value=invite.inviter.name, inline=True)
 
             invite_embed.add_field(name='URL', value=invite.url, inline=True)
-        
+
         invite_embed.set_thumbnail(url=member.avatar_url)
-        invite_embed.set_footer(text=f'User ID: {member.id}', icon_url=member.avatar_url)
+        invite_embed.set_footer(
+            text=f'User ID: {member.id}', icon_url=member.avatar_url)
 
         await send_webhook(
             webhook_invites.url,
@@ -724,83 +783,62 @@ class Logging(commands.Cog):
             'Role updated',
             self.bot
         )
+        embed.add_field(name='Name:', value=role_after.name, inline=True)
+
+        embed.set_footer(
+            text=f'Role ID: {role_after.id}', icon_url=guild.icon_url)
+        embed.set_thumbnail(url=guild.icon_url)
 
         if not (role_before.name == role_after.name):
             # name update
-            embed.add_field(name='Name:', value=role_after.name, inline=True)
             embed.add_field(
                 name='Name update:', value=f'**Before**: {role_before.name}\n**After**: {role_after.name}', inline=False)
 
-            embed.set_footer(
-                text=f'Role ID: {role_after.id}', icon_url=guild.icon_url)
-            embed.set_thumbnail(url=guild.icon_url)
-
-            await send_webhook(
-                webhook.url,
-                self.bot.aio_session,
-                embed=embed
-            )
-
-            return
-
         if not (role_before.hoist == role_after.hoist):
             # hoist update
-            embed.add_field(name='Name:', value=role_after.name, inline=True)
             embed.add_field(
                 name='Hoist update:', value=f'**Before**: {role_before.hoist}\n**After**: {role_after.hoist}', inline=False)
 
-            embed.set_footer(
-                text=f'Role ID: {role_after.id}', icon_url=guild.icon_url)
-            embed.set_thumbnail(url=guild.icon_url)
-
-            await send_webhook(
-                webhook.url,
-                self.bot.aio_session,
-                embed=embed
-            )
-
-            return
-
         if not (role_before.mentionable == role_after.mentionable):
             # mentionable update
-            embed.add_field(name='Name:', value=role_after.name, inline=True)
             embed.add_field(
                 name='Mentionable update:', value=f'**Before**: {role_before.mentionable}\n**After**: {role_after.mentionable}', inline=False)
 
-            embed.set_footer(
-                text=f'Role ID: {role_after.id}', icon_url=guild.icon_url)
-            embed.set_thumbnail(url=guild.icon_url)
-
-            await send_webhook(
-                webhook.url,
-                self.bot.aio_session,
-                embed=embed
-            )
-
-            return
-
         if not (role_before.color == role_after.color):
             # color update
-            embed.add_field(name='Name:', value=role_after.name, inline=True)
             embed.add_field(
                 name='Color update:', value=f'**Before**: {role_before.color}\n**After**: {role_after.color}', inline=False)
 
-            embed.set_footer(
-                text=f'Role ID: {role_after.id}', icon_url=guild.icon_url)
-            embed.set_thumbnail(url=guild.icon_url)
-
-            await send_webhook(
-                webhook.url,
-                self.bot.aio_session,
-                embed=embed
-            )
-
-            return
-
         if not (role_before.permissions == role_after.permissions):
-            # permissions update
-            # TODO: do this uh why am i being so lazy
-            return
+            # role permissions update
+            old_perms = list(iter(role_before.permissions))
+            new_perms = list(iter(role_after.permissions))
+
+            changed_perms = []
+            for i, perm in enumerate(new_perms):
+                if perm != old_perms[i]:
+                    changed_perms.append(perm)
+
+            changed_perms_string = ''
+            for perm in changed_perms:
+                to_be_added = f'`{perm[0]}`: '
+                if perm[1] is None:
+                    to_be_added += 'Overwrites removed'
+                else:
+                    to_be_added += 'Allowed' if perm[1] else 'Denied'
+
+                to_be_added += '\n'
+
+                changed_perms_string += to_be_added
+
+            embed.add_field(
+                name='Perms update:', value=changed_perms_string, inline=False)
+
+        await send_webhook(
+            webhook.url,
+            self.bot.aio_session,
+            embed=embed
+        )
 
     @commands.Cog.listener()
     async def on_guild_emojis_update(self, guild, emojis_before, emojis_after):
@@ -955,6 +993,7 @@ class Logging(commands.Cog):
             self.bot.aio_session,
             embed=embed
         )
+
 
 def setup(bot):
     bot.add_cog(Logging(bot))

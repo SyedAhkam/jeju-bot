@@ -99,21 +99,29 @@ class ErrorHandler(commands.Cog):
                 return
 
             if isinstance(error, commands.MissingPermissions):
-                required_perms = ', '.join(error.missing_perms)
+                required_perms = ''
+                for perm in error.missing_perms:
+                    required_perms += f'- {perm}'
+                    required_perms += '\n'
+
                 embed = error_embed(
                     ctx,
                     error_name='Missing Permmisions',
-                    error_msg=f'Sorry, You need to have these permissions to run this command: ``{required_perms}``'
+                    error_msg=f'Sorry, You need to have these permissions to run this command:\n``{required_perms}``'
                 )
                 await ctx.send(embed=embed)
                 return
 
             if isinstance(error, commands.BotMissingPermissions):
-                required_perms = ', '.join(error.missing_perms)
+                required_perms = ''
+                for perm in error.missing_perms:
+                    required_perms += f'- {perm}'
+                    required_perms += '\n'
+
                 embed = error_embed(
                     ctx,
                     error_name='Bot Missing Permmisions',
-                    error_msg=f'Sorry, I need to have these permissions to run this command: ``{required_perms}``'
+                    error_msg=f'Sorry, I need to have these permissions to run this command:\n``{required_perms}``'
                 )
                 await ctx.send(embed=embed)
                 return

@@ -3,7 +3,7 @@ from utils.embeds import normal_embed
 
 
 class Info(commands.Cog, name='info'):
-    """General commands to get info about certain things."""
+    """Some informational commands."""
 
     def __init__(self, bot):
         self.bot = bot
@@ -38,6 +38,14 @@ class Info(commands.Cog, name='info'):
             If you\'re experiencing high latency then probably something\'s up on the discord side."""
         )
         await ctx.send(embed=embed)
+
+    @commands.command(
+        name='support',
+        brief='Get an invite to the support server.'
+    )
+    async def support(self, ctx):
+        invite_link = 'https://discord.gg/M4TtdBw'
+        await ctx.send(f'**__My support server__**:\n{invite_link}')
 
 
 def setup(bot):

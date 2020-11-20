@@ -45,7 +45,7 @@ class Jeju(commands.Bot):
             case_insensitive=True,
             help_command=Help(),
             activity=discord.Activity(
-                type=discord.ActivityType.watching, name='+help | New and improved jeju!'),
+                type=discord.ActivityType.watching, name='+help | New and Improved jeju!'),
             intents=intents
         )
         self.load_extension('jishaku')

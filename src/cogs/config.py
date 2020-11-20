@@ -26,9 +26,6 @@ class Config(commands.Cog, name='config'):
         bucket = self.cd_mapping.get_bucket(ctx.message)
         retry_after = bucket.update_rate_limit()
         if retry_after:
-            # BUG: may create more issues in the future
-            if ctx.invoked_with in ['help', 'h']:
-                return True
             raise commands.CommandOnCooldown(bucket, retry_after)
         return True
 
@@ -150,7 +147,7 @@ class Config(commands.Cog, name='config'):
     )
     async def _enable(self, ctx):
         """**You can enable certain features of the bot using this command.**
-        **Tip**: You can do just `+enable` to see all the available features.
+        ▫️ You can do just `+enable` to see all the available features.
         **Examples**: ```bash
         +enable
         +enable logging
@@ -166,7 +163,7 @@ class Config(commands.Cog, name='config'):
     )
     async def _disable(self, ctx):
         """**You can disable certain features of the bot using this command.**
-        **Tip**: You can do just `+disable` to see all the available features.
+        ▫️ You can do just `+disable` to see all the available features.
         **Examples**: ```bash
         +disable
         +disable logging
@@ -182,7 +179,7 @@ class Config(commands.Cog, name='config'):
     )
     async def _set(self, ctx):
         """**You can set certain values of the bot using this command.**
-        **Tip**: You can do just `+set` to see all the available values.
+        ▫️ You can do just `+set` to see all the available values.
         **Examples**: ```bash
         +set
         +set log_channel #logs
@@ -198,7 +195,7 @@ class Config(commands.Cog, name='config'):
     )
     async def _add(self, ctx):
         """**You can add certain values to use in other features of the bot using this command.**
-        **Tip**: You can do just `+add` to see all the available values.
+        ▫️ You can do just `+add` to see all the available values.
         **Examples**: ```bash
         +add
         +add auto_roles @newbie
@@ -271,7 +268,7 @@ class Config(commands.Cog, name='config'):
         +disable ar
         ```
         """
-        #delete leftover roles
+        # delete leftover roles
         await self.auto_roles_collection.delete_many({'guild_id': ctx.guild.id})
 
         await self._disable_guild_feature(

@@ -18,13 +18,11 @@ class HelpMainMenu(ListPageSource):
             self.ctx,
             title='Help!',
             description=cleandoc(
-                f"""**Hi, Thanks for inviting the bot!**
-                **Tip**: Do `{self.ctx.prefix}help <category or command_name>` to get more info about them!
-                **Examples**: ```bash
-                {self.ctx.prefix}help
-                {self.ctx.prefix}help info
-                {self.ctx.prefix}help ping
-                ```
+                f"""**Hi, what can I help you with?**
+                ▫️ For more specific and detailed help for each commands, use:
+                `{self.ctx.prefix}help [category | command_name]`
+                ▫️  For further help, join my support server.
+                **Bot Prefix**: {self.ctx.prefix}
                 """
             )
         )
@@ -38,7 +36,7 @@ class HelpMainMenu(ListPageSource):
 
         for category in categories:
             menu_embed.add_field(
-                name=category[0].capitalize(), value=category[1], inline=False)
+                name=f'🔹 {category[0].capitalize()}', value=category[1], inline=False)
 
         return menu_embed
 
@@ -68,8 +66,9 @@ class HelpCogMenu(ListPageSource):
             self.ctx,
             title='Help!',
             description=cleandoc(
-                f"""**Hi, Here you can see all the available commands under this category.**
-                **Tip:** Do `{self.ctx.prefix}help <command_name>` to get more info on a command!
+                f"""**Hi, These are all the available commands under this category.**
+                ▫️ For more specific and detailed help for each commands, use:
+                `{self.ctx.prefix}help [category | command_name]`
                 """
             )
         )
@@ -83,7 +82,7 @@ class HelpCogMenu(ListPageSource):
 
         for command in commands:
             menu_embed.add_field(
-                name=command[0], value=command[1], inline=False)
+                name=f'🔹 {command[0]}', value=command[1], inline=False)
 
         return menu_embed
 

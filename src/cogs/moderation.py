@@ -20,9 +20,6 @@ class Moderation(commands.Cog, name='moderation'):
         bucket = self.cd_mapping.get_bucket(ctx.message)
         retry_after = bucket.update_rate_limit()
         if retry_after:
-            # BUG: may create more issues in the future
-            if ctx.invoked_with in ['help', 'h']:
-                return True
             raise commands.CommandOnCooldown(bucket, retry_after)
         return True
 
@@ -34,9 +31,11 @@ class Moderation(commands.Cog, name='moderation'):
     @commands.bot_has_permissions(manage_messages=True)
     @commands.has_permissions(manage_messages=True)
     async def purge(self, ctx, messages: int):
-        """**Purge the specified amount of messages**
+        """**Purges the specified amount of messages**
         **Args**:
         - `messages`: Number of messages to delete.
+        **Required Perms**:
+        - `manage_messages`: This permission is required by both bot and the user.
         **Examples**: ```bash
         +purge 10
         +purge 50
@@ -64,6 +63,8 @@ class Moderation(commands.Cog, name='moderation'):
         **Args**:
         - `member`: The member to kick.
         - `reason`: The reason for kicking. This is optional.
+        **Required Perms**:
+        - `kick_members`: This permission is required by both bot and the user.
         **Examples**: ```bash
         +kick 659094769607245845
         +kick @MEE6 cuz why not
@@ -94,6 +95,8 @@ class Moderation(commands.Cog, name='moderation'):
         **Args**:
         - `user`: The user to ban.
         - `reason`: The reason for banning. This is optional.
+        **Required Perms**:
+        - `ban_members`: This permission is required by both bot and the user.
         **Examples**: ```bash
         +ban 659094769607245845
         +ban @MEE6 cuz why not
@@ -124,6 +127,8 @@ class Moderation(commands.Cog, name='moderation'):
         **Args**:
         - `user`: The user to unban.
         - `reason`: The reason for unban. This is optional.
+        **Required Perms**:
+        - `ban_members`: This permission is required by both bot and the user.
         **Examples**: ```bash
         +unban 659094769607245845
         +unban @MEE6 cuz people like you

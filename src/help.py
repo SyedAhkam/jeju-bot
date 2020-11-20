@@ -64,7 +64,7 @@ class Help(commands.HelpCommand):
             embed = error_embed(
                 self.context,
                 error_name='No Commands',
-                error_msg=f'Sorry, There are no commands in this category yet.\nMaybe check out other categories by using just `{ctx.prefix}help`.'
+                error_msg=f'Sorry, There are no commands in this category yet.\nMaybe check out other categories by using just `{self.context.prefix}help`.'
             )
             await self.context.send(embed=embed)
             return
@@ -85,19 +85,23 @@ class Help(commands.HelpCommand):
             self.context,
             title='Help!',
             description=(group.help or "No Help Message") +
-            "\nThis command is a group."
+            "\n▫️ *This command is a group.*"
         )
         embed.set_thumbnail(
             url=self.context.guild.icon_url if self.context.guild else self.context.author.avatar_url)
 
-        embed.add_field(name='Name:', value=group.name, inline=True)
-        embed.add_field(name='Category:',
-                        value=group.cog.qualified_name, inline=True)
-        embed.add_field(name='Aliases:', value=', '.join(
+        embed.add_field(name='🔹 __**Name**__:',
+                        value=group.name, inline=False)
+        embed.add_field(name='🔹 __**Category**__:',
+                        value=group.cog.qualified_name, inline=False)
+        embed.add_field(name='🔹 __**Aliases**__:', value=', '.join(
             group.aliases) or 'None', inline=True)
 
-        embed.add_field(name='Usage:', value=self.format_command_usage(
-            self.context, group), inline=False)
+        embed.add_field(
+            name='🔹 __**Usage**__:',
+            value=self.format_command_usage(self.context, group),
+            inline=False
+        )
 
         await self.context.send(embed=embed)
 
@@ -110,13 +114,14 @@ class Help(commands.HelpCommand):
         embed.set_thumbnail(
             url=self.context.guild.icon_url if self.context.guild else self.context.author.avatar_url)
 
-        embed.add_field(name='Name:', value=command.name, inline=True)
-        embed.add_field(name='Category:',
-                        value=command.cog.qualified_name, inline=True)
-        embed.add_field(name='Aliases:', value=', '.join(
+        embed.add_field(name='🔹 __**Name**__:',
+                        value=command.name, inline=False)
+        embed.add_field(name='🔹 __**Category**__:',
+                        value=command.cog.qualified_name, inline=False)
+        embed.add_field(name='🔹 __**Aliases**__:', value=', '.join(
             command.aliases) or 'None', inline=True)
 
-        embed.add_field(name='Usage:', value=self.format_command_usage(
+        embed.add_field(name='🔹 __**Usage**__:', value=self.format_command_usage(
             self.context, command), inline=False)
 
         await self.context.send(embed=embed)

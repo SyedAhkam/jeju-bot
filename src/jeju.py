@@ -4,6 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from utils.logger import bot_logger
 from utils.db import get_custom_prefix
 from datetime import datetime
+from help import Help
 
 import logging
 import os
@@ -42,7 +43,7 @@ class Jeju(commands.Bot):
         super().__init__(
             command_prefix=self.get_prefix,
             case_insensitive=True,
-            help_command=None,
+            help_command=Help(),
             activity=discord.Activity(
                 type=discord.ActivityType.watching, name='+help | New and improved jeju!'),
             intents=intents
@@ -64,7 +65,6 @@ class Jeju(commands.Bot):
             return commands.when_mentioned_or(custom_prefix)(self, message)
         return commands.when_mentioned_or(default_prefix)(self, message)
 
-
     @staticmethod
     def is_env_dev():
         """A simple method for checking if the bot is running in dev environment."""
@@ -76,7 +76,7 @@ class Jeju(commands.Bot):
     async def startup(self):
         """This function runs on startup. Used for loading cogs."""
         await self.wait_until_ready()
-        ignored_cogs = ('eval')
+        ignored_cogs = ('eval', 'help')
         for filename in os.listdir('./cogs'):
             if filename.endswith('.py'):
                 if filename[:-3] in ignored_cogs:

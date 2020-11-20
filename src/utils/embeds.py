@@ -86,3 +86,10 @@ def log_embed_danger(title, bot, description=Embed.Empty):
     )
     embed.set_author(name=title, icon_url=bot.user.avatar_url)
     return embed
+
+
+def is_embed(object):
+    if isinstance(object, Embed):
+        return True
+    else:
+        False

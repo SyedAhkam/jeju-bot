@@ -78,4 +78,4 @@ You can also set `DISCORD_TOKEN_BETA` environment variable and run the bot in DE
 
 ## Contact me
 
-My discord tag: `SyedAhkam#6584`
+My discord tag: `Syed#0006`
